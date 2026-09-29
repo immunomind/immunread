@@ -29,6 +29,8 @@ exclude_docs: |
   !/README.md
   !/man/
   !/man/*.md
+  !/assets/
+  !/assets/**
 nav:
   - Reference:
       - Overview: README.md
