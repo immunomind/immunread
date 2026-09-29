@@ -56,6 +56,17 @@ jobs:
         run: altdoc::render_docs(freeze = FALSE, parallel = FALSE, verbose = TRUE)
         shell: Rscript {0}
 
+      - name: Validate site assets
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          site = Path("docs")
+          assert (site / "index.html").is_file(), "Missing site index"
+          assert list((site / "assets/stylesheets").glob("main.*.min.css")), "Missing Material CSS"
+          assert list((site / "assets/javascripts").glob("bundle.*.min.js")), "Missing Material JavaScript"
+          PY
+
       - name: Deploy to GitHub Pages
         if: >-
           github.event_name != 'pull_request' &&
