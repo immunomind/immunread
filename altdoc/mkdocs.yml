@@ -1,0 +1,49 @@
+site_name: immunread
+site_url: https://immunomind.github.io/immunread/
+repo_url: https://github.com/immunomind/immunread
+repo_name: immunomind/immunread
+
+theme:
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+
+plugins:
+  - search
+
+use_directory_urls: false
+exclude_docs: |
+  *
+  !/README.md
+  !/man/
+  !/man/*.md
+
+nav:
+  - Reference:
+      - Overview: README.md
+      - AIRR-C bulk: man/read_airr_bulk.md
+      - AIRR-C single-cell: man/read_airr_sc.md
+      - 10x Genomics: man/read_10x.md
+      - Adaptive immunoSEQ: man/read_adaptive.md
+      - BD Rhapsody: man/read_bd.md
+      - Dandelion: man/read_dandelion.md
+      - Immcantation: man/read_immcantation.md
+      - MiXCR: man/read_mixcr.md
+      - Parse Biosciences: man/read_parsebio.md
+      - TRUST4: man/read_trust4.md
+      - WAT3R: man/read_wat3r.md

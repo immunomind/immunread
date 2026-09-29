@@ -1,0 +1,11 @@
+^immunread\.Rproj$
+^\.Rproj\.user$
+^LICENSE\.md$
+^README\.Rmd$
+^cran-comments\.md$
+^LICENSE$
+.venv_altdoc
+^docs$
+^altdoc$
+^\.github$
+^CRAN-SUBMISSION$
