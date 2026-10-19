@@ -5,11 +5,12 @@ Authors@R:
     person("Vadim I.", "Nazarov", , "support@immunomind.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-3659-2709"))
 Contact: support@immunomind.com
-Description: Provides ready-to-use parser functions for importing adaptive 
-    immune receptor repertoire (AIRR) tables into ImmunData
-    objects. It focuses on AIRR-C as the canonical format and also includes 
-    parsers for common tool-specific outputs: MiXCR, 10xGenomics, BD Genomics,
-    Adaptive Biotechnologies, Dandelion, Immcantation, ParseBio, Trust4, WAT3R.
+Description: Provides ready-to-use parser functions for importing adaptive
+    immune receptor repertoire (AIRR) tables into 'ImmunData'
+    objects. It focuses on the AIRR Community format as the canonical format
+    and also includes parsers for common tool-specific outputs: 'MiXCR',
+    '10xGenomics', 'BD Genomics', 'Adaptive Biotechnologies', 'Dandelion',
+    'Immcantation', 'ParseBio', 'Trust4', 'WAT3R'.
 License: Apache License (>= 2)
 URL: https://immunomind.github.io/docs/
 Encoding: UTF-8

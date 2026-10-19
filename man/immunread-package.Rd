@@ -6,7 +6,7 @@
 \alias{immunread-package}
 \title{immunread: Convenient Parsers for Popular Immune Repertoire Data Formats}
 \description{
-Provides ready-to-use parser functions for importing adaptive immune receptor repertoire (AIRR) tables into ImmunData objects. It focuses on AIRR-C as the canonical format and also includes parsers for common tool-specific outputs: MiXCR, 10xGenomics, BD Genomics, Adaptive Biotechnologies, Dandelion, Immcantation, ParseBio, Trust4, WAT3R.
+Provides ready-to-use parser functions for importing adaptive immune receptor repertoire (AIRR) tables into 'ImmunData' objects. It focuses on the AIRR Community format as the canonical format and also includes parsers for common tool-specific outputs: 'MiXCR', '10xGenomics', 'BD Genomics', 'Adaptive Biotechnologies', 'Dandelion', 'Immcantation', 'ParseBio', 'Trust4', 'WAT3R'.
 }
 \seealso{
 Useful links:
