@@ -12,7 +12,8 @@ Description: Provides ready-to-use parser functions for importing adaptive
     '10xGenomics', 'BD Genomics', 'Adaptive Biotechnologies', 'Dandelion',
     'Immcantation', 'ParseBio', 'Trust4', 'WAT3R'.
 License: Apache License (>= 2)
-URL: https://immunomind.github.io/docs/
+URL: https://immunomind.github.io/docs/, https://github.com/immunomind/immunread
+BugReports: https://github.com/immunomind/immunread/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Depends:
