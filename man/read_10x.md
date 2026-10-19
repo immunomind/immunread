@@ -2,6 +2,8 @@
 
 # Read 10x Genomics V(D)J contigs
 
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_10x.R#L14)
+
 ## Description
 
 Reads 10x Genomics V(D)J contig annotations and maps their barcode,

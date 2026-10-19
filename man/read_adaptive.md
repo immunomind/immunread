@@ -2,6 +2,8 @@
 
 # Read Adaptive immunoSEQ Analyzer and Connector tables
 
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_adaptive.R#L15)
+
 ## Description
 
 Reads Adaptive immunoSEQ Analyzer or Connector tables and maps their

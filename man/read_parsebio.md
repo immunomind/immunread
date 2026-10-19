@@ -2,6 +2,8 @@
 
 # Read Parse Biosciences TCR tables
 
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_parse.R#L15)
+
 ## Description
 
 Reads wide Parse Biosciences TCR tables, emits one row per supplied

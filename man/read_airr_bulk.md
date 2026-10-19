@@ -2,6 +2,8 @@
 
 # Read an AIRR Rearrangement table as bulk repertoire data
 
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_airr.R#L33)
+
 ## Description
 
 Reads a bulk AIRR Rearrangement table, filters productive rows, and

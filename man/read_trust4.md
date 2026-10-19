@@ -2,6 +2,8 @@
 
 # Read TRUST4 cell tables
 
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_trust4.R#L15)
+
 ## Description
 
 Reads TRUST4 cell tables, expands embedded chain records, and maps their

@@ -2,6 +2,8 @@
 
 # Read Immcantation AIRR-like tables
 
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_immcantation.R#L15)
+
 ## Description
 
 Reads Immcantation AIRR-like tables in bulk or single-cell mode and maps

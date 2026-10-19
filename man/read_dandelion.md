@@ -2,6 +2,8 @@
 
 # Read Dandelion AIRR-like contigs
 
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_dandelion.R#L14)
+
 ## Description
 
 Reads Dandelion AIRR-like contigs and maps their cell, locus, receptor,

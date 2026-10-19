@@ -2,6 +2,8 @@
 
 # Read BD Rhapsody AIRR-like contigs
 
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_bd.R#L14)
+
 ## Description
 
 Reads BD Rhapsody AIRR-like contigs and preserves their cell, locus,

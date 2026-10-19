@@ -2,6 +2,8 @@
 
 # Read MiXCR single-cell clones
 
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_mixcr.R#L14)
+
 ## Description
 
 Reads MiXCR clone tables and maps their cell, chain, gene, sequence, and

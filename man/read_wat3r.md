@@ -2,6 +2,8 @@
 
 # Read WAT3R TCR tables
 
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_wat3r.R#L14)
+
 ## Description
 
 Reads wide WAT3R TCR tables, emits one row per supplied chain, and maps

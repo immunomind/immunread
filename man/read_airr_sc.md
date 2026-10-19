@@ -2,6 +2,8 @@
 
 # Read an AIRR Rearrangement table as single-cell repertoire data
 
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_airr.R#L65)
+
 ## Description
 
 Reads a single-cell AIRR Rearrangement table, maps <code>barcode</code>
