@@ -1,0 +1,24 @@
+/* Parchment gold and ink navy, inspired by the immunread scroll. */
+[data-md-color-primary="custom"] {
+  --md-primary-fg-color: #ffd58a;
+  --md-primary-fg-color--light: #fff0ce;
+  --md-primary-fg-color--dark: #e8ad53;
+  --md-primary-bg-color: #06152f;
+  --md-primary-bg-color--light: #23324b;
+}
+
+[data-md-color-scheme="default"] {
+  --md-typeset-a-color: #875019;
+  --md-accent-fg-color: #875019;
+  --md-accent-fg-color--transparent: #8750191a;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-typeset-a-color: #ffd58a;
+  --md-accent-fg-color: #ffe6b5;
+  --md-accent-fg-color--transparent: #ffe6b51a;
+}
+
+.md-nav__link--active {
+  color: var(--md-typeset-a-color);
+}
