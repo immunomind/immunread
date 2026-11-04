@@ -2,7 +2,7 @@
 
 # Read MiXCR single-cell clones
 
-[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_mixcr.R#L38)
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_mixcr.R#L41)
 
 ## Description
 
@@ -138,7 +138,10 @@ library("immunread")
 duckplyr::db_exec("SET threads TO 1")
 
 path <- system.file("extdata", "mixcr", "4.7.0", "contigs.csv.gz",
-  package = "immunread", mustWork = TRUE)
-idata <- read_mixcr(path, schema = c("v_call", "junction_aa"),
-  output_folder = tempfile("immunread-"))
+  package = "immunread", mustWork = TRUE
+)
+idata <- read_mixcr(path,
+  schema = c("v_call", "junction_aa"),
+  output_folder = tempfile("immunread-")
+)
 ```

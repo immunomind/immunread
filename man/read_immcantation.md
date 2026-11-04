@@ -2,7 +2,7 @@
 
 # Read Immcantation AIRR-like tables
 
-[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_immcantation.R#L40)
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_immcantation.R#L42)
 
 ## Description
 
@@ -143,11 +143,11 @@ and manifest annotations keep their names.
 ``` r
 library("immunread")
 
-# Use one thread for this small example.
-duckplyr::db_exec("SET threads TO 1")
-
 path <- system.file("extdata", "immcantation", "single-cell.tsv.gz",
-  package = "immunread", mustWork = TRUE)
-idata <- read_immcantation(path, schema = c("v_call", "junction_aa"),
-  mode = "sc", output_folder = tempfile("immunread-"))
+  package = "immunread", mustWork = TRUE
+)
+idata <- read_immcantation(path,
+  schema = c("v_call", "junction_aa"),
+  mode = "sc", output_folder = tempfile("immunread-")
+)
 ```

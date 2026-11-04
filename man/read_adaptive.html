@@ -854,7 +854,7 @@
 
 
 <h1 id="read-adaptive-immunoseq-analyzer-and-connector-tables">Read Adaptive immunoSEQ Analyzer and Connector tables</h1>
-<p><a href="https://github.com/immunomind/immunread/tree/main/R/read_adaptive.R#L49"><strong>Source code</strong></a></p>
+<p><a href="https://github.com/immunomind/immunread/tree/main/R/read_adaptive.R#L52"><strong>Source code</strong></a></p>
 <h2 id="description">Description</h2>
 <p>Reads Adaptive immunoSEQ Analyzer or Connector tables.</p>
 <p>Input columns are described in Adaptive’s
@@ -992,9 +992,12 @@ not infer UMIs.</p>
 duckplyr::db_exec(&quot;SET threads TO 1&quot;)
 
 path &lt;- system.file(&quot;extdata&quot;, &quot;adaptive&quot;, &quot;analyzer&quot;, &quot;contigs.tsv.gz&quot;,
-  package = &quot;immunread&quot;, mustWork = TRUE)
-idata &lt;- read_adaptive(path, schema = c(&quot;v_call&quot;, &quot;junction_aa&quot;),
-  output_folder = tempfile(&quot;immunread-&quot;))
+  package = &quot;immunread&quot;, mustWork = TRUE
+)
+idata &lt;- read_adaptive(path,
+  schema = c(&quot;v_call&quot;, &quot;junction_aa&quot;),
+  output_folder = tempfile(&quot;immunread-&quot;)
+)
 </code></pre>
 
 

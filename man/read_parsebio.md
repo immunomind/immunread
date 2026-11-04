@@ -2,7 +2,7 @@
 
 # Read Parse Biosciences TCR tables
 
-[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_parse.R#L50)
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_parse.R#L53)
 
 ## Description
 
@@ -158,7 +158,10 @@ library("immunread")
 duckplyr::db_exec("SET threads TO 1")
 
 path <- system.file("extdata", "parsebio", "1.6.1", "contigs.csv.gz",
-  package = "immunread", mustWork = TRUE)
-idata <- read_parsebio(path, schema = c("v_call", "junction_aa"),
-  output_folder = tempfile("immunread-"))
+  package = "immunread", mustWork = TRUE
+)
+idata <- read_parsebio(path,
+  schema = c("v_call", "junction_aa"),
+  output_folder = tempfile("immunread-")
+)
 ```

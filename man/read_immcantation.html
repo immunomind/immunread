@@ -854,7 +854,7 @@
 
 
 <h1 id="read-immcantation-airr-like-tables">Read Immcantation AIRR-like tables</h1>
-<p><a href="https://github.com/immunomind/immunread/tree/main/R/read_immcantation.R#L40"><strong>Source code</strong></a></p>
+<p><a href="https://github.com/immunomind/immunread/tree/main/R/read_immcantation.R#L42"><strong>Source code</strong></a></p>
 <h2 id="description">Description</h2>
 <p>Reads Immcantation tables using the
 <a href="https://changeo.readthedocs.io/en/stable/standard.html#airr-c-format">AIRR-C
@@ -985,13 +985,13 @@ and manifest annotations keep their names.</p>
 <h2 id="examples">Examples</h2>
 <pre><code class="language-r">library(&quot;immunread&quot;)
 
-# Use one thread for this small example.
-duckplyr::db_exec(&quot;SET threads TO 1&quot;)
-
 path &lt;- system.file(&quot;extdata&quot;, &quot;immcantation&quot;, &quot;single-cell.tsv.gz&quot;,
-  package = &quot;immunread&quot;, mustWork = TRUE)
-idata &lt;- read_immcantation(path, schema = c(&quot;v_call&quot;, &quot;junction_aa&quot;),
-  mode = &quot;sc&quot;, output_folder = tempfile(&quot;immunread-&quot;))
+  package = &quot;immunread&quot;, mustWork = TRUE
+)
+idata &lt;- read_immcantation(path,
+  schema = c(&quot;v_call&quot;, &quot;junction_aa&quot;),
+  mode = &quot;sc&quot;, output_folder = tempfile(&quot;immunread-&quot;)
+)
 </code></pre>
 
 

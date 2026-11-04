@@ -854,7 +854,7 @@
 
 
 <h1 id="read-mixcr-single-cell-clones">Read MiXCR single-cell clones</h1>
-<p><a href="https://github.com/immunomind/immunread/tree/main/R/read_mixcr.R#L38"><strong>Source code</strong></a></p>
+<p><a href="https://github.com/immunomind/immunread/tree/main/R/read_mixcr.R#L41"><strong>Source code</strong></a></p>
 <h2 id="description">Description</h2>
 <p>Reads MiXCR
 <a href="https://mixcr.com/mixcr/reference/mixcr-export/#single-cell-libraries">single-cell
@@ -979,9 +979,12 @@ full profile.</p>
 duckplyr::db_exec(&quot;SET threads TO 1&quot;)
 
 path &lt;- system.file(&quot;extdata&quot;, &quot;mixcr&quot;, &quot;4.7.0&quot;, &quot;contigs.csv.gz&quot;,
-  package = &quot;immunread&quot;, mustWork = TRUE)
-idata &lt;- read_mixcr(path, schema = c(&quot;v_call&quot;, &quot;junction_aa&quot;),
-  output_folder = tempfile(&quot;immunread-&quot;))
+  package = &quot;immunread&quot;, mustWork = TRUE
+)
+idata &lt;- read_mixcr(path,
+  schema = c(&quot;v_call&quot;, &quot;junction_aa&quot;),
+  output_folder = tempfile(&quot;immunread-&quot;)
+)
 </code></pre>
 
 

@@ -2,7 +2,7 @@
 
 # Read Dandelion AIRR-like contigs
 
-[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_dandelion.R#L34)
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_dandelion.R#L36)
 
 ## Description
 
@@ -131,11 +131,11 @@ names.
 ``` r
 library("immunread")
 
-# Use one thread for this small example.
-duckplyr::db_exec("SET threads TO 1")
-
 path <- system.file("extdata", "dandelion", "0.5.5", "contigs.csv.gz",
-  package = "immunread", mustWork = TRUE)
-idata <- read_dandelion(path, schema = c("v_call", "junction_aa"),
-  output_folder = tempfile("immunread-"))
+  package = "immunread", mustWork = TRUE
+)
+idata <- read_dandelion(path,
+  schema = c("v_call", "junction_aa"),
+  output_folder = tempfile("immunread-")
+)
 ```

@@ -854,7 +854,7 @@
 
 
 <h1 id="read-trust4-cell-tables">Read TRUST4 cell tables</h1>
-<p><a href="https://github.com/immunomind/immunread/tree/main/R/read_trust4.R#L46"><strong>Source code</strong></a></p>
+<p><a href="https://github.com/immunomind/immunread/tree/main/R/read_trust4.R#L49"><strong>Source code</strong></a></p>
 <h2 id="description">Description</h2>
 <p>Reads TRUST4 cell tables and separates their chain records into rows
 with AIRR names for the gene, sequence, and count annotations.</p>
@@ -990,9 +990,12 @@ profile. The available columns also depend on the input and
 duckplyr::db_exec(&quot;SET threads TO 1&quot;)
 
 path &lt;- system.file(&quot;extdata&quot;, &quot;trust4&quot;, &quot;1.1.7&quot;, &quot;contigs.csv.gz&quot;,
-  package = &quot;immunread&quot;, mustWork = TRUE)
-idata &lt;- read_trust4(path, schema = c(&quot;v_call&quot;, &quot;junction_aa&quot;),
-  output_folder = tempfile(&quot;immunread-&quot;))
+  package = &quot;immunread&quot;, mustWork = TRUE
+)
+idata &lt;- read_trust4(path,
+  schema = c(&quot;v_call&quot;, &quot;junction_aa&quot;),
+  output_folder = tempfile(&quot;immunread-&quot;)
+)
 </code></pre>
 
 

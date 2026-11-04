@@ -2,7 +2,7 @@
 
 # Read Adaptive immunoSEQ Analyzer and Connector tables
 
-[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_adaptive.R#L49)
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_adaptive.R#L52)
 
 ## Description
 
@@ -153,7 +153,10 @@ library("immunread")
 duckplyr::db_exec("SET threads TO 1")
 
 path <- system.file("extdata", "adaptive", "analyzer", "contigs.tsv.gz",
-  package = "immunread", mustWork = TRUE)
-idata <- read_adaptive(path, schema = c("v_call", "junction_aa"),
-  output_folder = tempfile("immunread-"))
+  package = "immunread", mustWork = TRUE
+)
+idata <- read_adaptive(path,
+  schema = c("v_call", "junction_aa"),
+  output_folder = tempfile("immunread-")
+)
 ```

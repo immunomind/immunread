@@ -2,7 +2,7 @@
 
 # Read 10x Genomics V(D)J contigs
 
-[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_10x.R#L44)
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_10x.R#L47)
 
 ## Description
 
@@ -147,7 +147,10 @@ library("immunread")
 duckplyr::db_exec("SET threads TO 1")
 
 path <- system.file("extdata", "10x", "9.0.1", "contigs.csv.gz",
-  package = "immunread", mustWork = TRUE)
-idata <- read_10x(path, schema = c("v_call", "junction_aa"),
-  output_folder = tempfile("immunread-"))
+  package = "immunread", mustWork = TRUE
+)
+idata <- read_10x(path,
+  schema = c("v_call", "junction_aa"),
+  output_folder = tempfile("immunread-")
+)
 ```

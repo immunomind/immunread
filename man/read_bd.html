@@ -854,7 +854,7 @@
 
 
 <h1 id="read-bd-rhapsody-airr-like-contigs">Read BD Rhapsody AIRR-like contigs</h1>
-<p><a href="https://github.com/immunomind/immunread/tree/main/R/read_bd.R#L34"><strong>Source code</strong></a></p>
+<p><a href="https://github.com/immunomind/immunread/tree/main/R/read_bd.R#L37"><strong>Source code</strong></a></p>
 <h2 id="description">Description</h2>
 <p>Reads BD Rhapsody
 <a href="https://bd-rhapsody-bioinfo-docs.genomics.bd.com/outputs/outputs_vdj_contigs.html">VDJ
@@ -976,9 +976,12 @@ names.</p>
 duckplyr::db_exec(&quot;SET threads TO 1&quot;)
 
 path &lt;- system.file(&quot;extdata&quot;, &quot;bd&quot;, &quot;2.3&quot;, &quot;contigs.csv.gz&quot;,
-  package = &quot;immunread&quot;, mustWork = TRUE)
-idata &lt;- read_bd(path, schema = c(&quot;v_call&quot;, &quot;junction_aa&quot;),
-  output_folder = tempfile(&quot;immunread-&quot;))
+  package = &quot;immunread&quot;, mustWork = TRUE
+)
+idata &lt;- read_bd(path,
+  schema = c(&quot;v_call&quot;, &quot;junction_aa&quot;),
+  output_folder = tempfile(&quot;immunread-&quot;)
+)
 </code></pre>
 
 
