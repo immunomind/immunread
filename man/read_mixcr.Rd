@@ -68,6 +68,9 @@ columns, as in the bundled MiXCR 4.7.0 example. Exported column names depend on
 the MiXCR version and export options.
 }
 \examples{
+# Use one thread for this small example.
+duckplyr::db_exec("SET threads TO 1")
+
 path <- system.file("extdata", "mixcr", "4.7.0", "contigs.csv.gz",
   package = "immunread", mustWork = TRUE)
 idata <- read_mixcr(path, schema = c("v_call", "junction_aa"),

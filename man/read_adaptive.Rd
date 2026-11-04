@@ -79,6 +79,9 @@ and the legacy
 \href{https://clients.adaptivebiotech.com/assets/downloads/immunoSEQ_AnalyzerManual.pdf}{Analyzer manual, Sample Export section}.
 }
 \examples{
+# Use one thread for this small example.
+duckplyr::db_exec("SET threads TO 1")
+
 path <- system.file("extdata", "adaptive", "analyzer", "contigs.tsv.gz",
   package = "immunread", mustWork = TRUE)
 idata <- read_adaptive(path, schema = c("v_call", "junction_aa"),

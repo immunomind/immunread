@@ -5,8 +5,8 @@ test_that("dandelion 0.5.5 fixture maps fields and counts receptors", {
   expect_true(all(c("cell_id", "locus", "v_call", "j_call", "junction", "junction_aa", "umi_count") %in% names(result)))
   expect_true(any(!is.na(result$v_call) & result$v_call != ""))
   expect_true(any(!is.na(result$junction_aa) & result$junction_aa != ""))
-  expect_equal(idata |> dplyr::count() |> dplyr::pull(n), 121L)
-  expect_equal(idata$receptors |> dplyr::count() |> dplyr::pull(n), 121L)
+  expect_equal(idata |> dplyr::count() |> dplyr::pull(n), 58L)
+  expect_equal(idata$receptors |> dplyr::count() |> dplyr::pull(n), 58L)
 })
 
 test_that("Dandelion normalizes old and modern UMI count fields", {

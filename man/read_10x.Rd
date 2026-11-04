@@ -74,6 +74,9 @@ such as \code{filtered_contig_annotations.csv} and maps their
 barcode, locus, gene, sequence, and count fields to AIRR-style columns.
 }
 \examples{
+# Use one thread for this small example.
+duckplyr::db_exec("SET threads TO 1")
+
 path <- system.file("extdata", "10x", "9.0.1", "contigs.csv.gz",
   package = "immunread", mustWork = TRUE)
 idata <- read_10x(path, schema = c("v_call", "junction_aa"),

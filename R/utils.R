@@ -114,7 +114,8 @@ format_chain_aliases <- function(data, aliases, targets) {
   missing <- setdiff(targets, names(data))
   if ("umi_count" %in% missing) {
     stop("Missing per-chain UMI/read count: ", aliases[["umi_count"]],
-         call. = FALSE)
+      call. = FALSE
+    )
   }
   # Give emitted count columns a common type before combining wide chain groups.
   # Validate and convert them after absent chain rows have been removed.
@@ -125,7 +126,9 @@ format_chain_aliases <- function(data, aliases, targets) {
     })
     data <- dplyr::mutate(data, !!!stats::setNames(casts, counts))
   }
-  if (!length(missing)) return(data)
+  if (!length(missing)) {
+    return(data)
+  }
   values <- rep(list(NA_character_), length(missing))
   dplyr::mutate(data, !!!stats::setNames(values, missing))
 }
@@ -146,19 +149,23 @@ normalize_airr_fields <- function(data, count_col = NULL) {
   text <- intersect(c(
     "sequence_id", "cell_id", "locus", "v_call", "d_call", "d2_call", "j_call", "c_call",
     "sequence", "sequence_aa", "junction", "junction_aa",
-    paste0(rep(c("fwr1", "cdr1", "fwr2", "cdr2", "fwr3", "cdr3", "fwr4"), each = 2),
-           c("", "_aa"))
+    paste0(
+      rep(c("fwr1", "cdr1", "fwr2", "cdr2", "fwr3", "cdr3", "fwr4"), each = 2),
+      c("", "_aa")
+    )
   ), names(data))
+  # Keep the lazy expression small because downstream queries reuse it.
+  missing_pattern <- "^(NA|None|NaN|nan|<NA>|[*])$"
   normalize <- lapply(c(text, counts), function(name) {
     value <- rlang::expr(dd$cast_to_type(!!rlang::sym(name), ""))
-    tokens <- c("", "NA", "None", "NaN", "nan", "<NA>", "*")
-    value <- rlang::expr(dplyr::if_else(!!value %in% !!tokens, NA_character_, !!value))
-    value
+    rlang::expr(dd$nullif(dd$regexp_replace(!!value, !!missing_pattern, ""), ""))
   })
   if (length(normalize)) {
     data <- dplyr::mutate(data, !!!stats::setNames(normalize, c(text, counts)))
   }
-  if (!length(counts)) return(data)
+  if (!length(counts)) {
+    return(data)
+  }
 
   number_pattern <- "^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)([eE][+-]?[0-9]+)?$"
   check_names <- paste0("invalid_", counts)
@@ -169,28 +176,36 @@ normalize_airr_fields <- function(data, count_col = NULL) {
   malformed <- dplyr::collect(dplyr::summarise(
     data, !!!stats::setNames(malformed, check_names)
   ))
+
   bad <- counts[vapply(malformed, isTRUE, logical(1))]
   if (length(bad)) {
     stop("Invalid numeric count in column(s): ", paste(bad, collapse = ", "), call. = FALSE)
   }
+
   casts <- lapply(counts, function(name) {
     rlang::expr(dd$cast_to_type(!!rlang::sym(name), 0.0))
   })
+
   data <- dplyr::mutate(data, !!!stats::setNames(casts, counts))
   invalid <- lapply(counts, function(name) {
     value <- rlang::sym(name)
     rlang::expr(dd$bool_or(!is.na(!!value) &
       (!dd$isfinite(!!value) | !!value < 0 | !!value != dd$floor(!!value))))
   })
+
   checks <- stats::setNames(invalid, check_names)
   if (!is.null(count_col) && count_col %in% counts) {
     checks$missing_selected_count <- rlang::expr(dd$bool_or(is.na(!!rlang::sym(count_col))))
   }
+
   checked <- dplyr::collect(dplyr::summarise(data, !!!checks))
+
   bad <- counts[vapply(checked[check_names], isTRUE, logical(1))]
   if (length(bad)) {
     stop("Counts must be finite, non-negative integers in column(s): ",
-         paste(bad, collapse = ", "), call. = FALSE)
+      paste(bad, collapse = ", "),
+      call. = FALSE
+    )
   }
   if ("missing_selected_count" %in% names(checked) && isTRUE(checked$missing_selected_count)) {
     stop("Missing values in selected abundance/ranking column: ", count_col, call. = FALSE)

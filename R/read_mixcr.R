@@ -27,6 +27,9 @@
 #'   present. Rows that are not productive are filtered out when that column is
 #'   supplied. Other source columns keep their names in the full profile.
 #' @examples
+#' # Use one thread for this small example.
+#' duckplyr::db_exec("SET threads TO 1")
+#'
 #' path <- system.file("extdata", "mixcr", "4.7.0", "contigs.csv.gz",
 #'   package = "immunread", mustWork = TRUE)
 #' idata <- read_mixcr(path, schema = c("v_call", "junction_aa"),

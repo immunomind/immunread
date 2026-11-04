@@ -39,6 +39,9 @@
 #'   reader keeps the columns included in that profile. The available columns
 #'   also depend on the input and `schema`.
 #' @examples
+#' # Use one thread for this small example.
+#' duckplyr::db_exec("SET threads TO 1")
+#'
 #' path <- system.file("extdata", "parsebio", "1.6.1", "contigs.csv.gz",
 #'   package = "immunread", mustWork = TRUE)
 #' idata <- read_parsebio(path, schema = c("v_call", "junction_aa"),

@@ -33,6 +33,9 @@
 #'   keep their names in the full profile. The selected chains in the returned
 #'   object depend on the schema and count settings passed to `immundata`.
 #' @examples
+#' # Use one thread for this small example.
+#' duckplyr::db_exec("SET threads TO 1")
+#'
 #' path <- system.file("extdata", "10x", "9.0.1", "contigs.csv.gz",
 #'   package = "immunread", mustWork = TRUE)
 #' idata <- read_10x(path, schema = c("v_call", "junction_aa"),

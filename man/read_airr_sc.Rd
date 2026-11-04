@@ -69,6 +69,9 @@ when another count field has values. The count and missing-value rules
 described in \code{\link[=read_airr_bulk]{read_airr_bulk()}} also apply here.
 }
 \examples{
+# Use one thread for this small example.
+duckplyr::db_exec("SET threads TO 1")
+
 path <- system.file("extdata", "airr", "2.0-sc", "contigs.tsv.gz",
   package = "immunread", mustWork = TRUE)
 schema <- immundata::make_receptor_schema(

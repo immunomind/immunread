@@ -77,6 +77,9 @@ Each non-empty primary or secondary chain record becomes a row before
 'immundata' selects the chains used to construct receptors.
 }
 \examples{
+# Use one thread for this small example.
+duckplyr::db_exec("SET threads TO 1")
+
 path <- system.file("extdata", "trust4", "1.1.7", "contigs.csv.gz",
   package = "immunread", mustWork = TRUE)
 idata <- read_trust4(path, schema = c("v_call", "junction_aa"),

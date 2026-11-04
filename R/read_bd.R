@@ -23,6 +23,9 @@
 #'   available columns depend on the input and `column_profile`. Source and
 #'   manifest annotations keep their names.
 #' @examples
+#' # Use one thread for this small example.
+#' duckplyr::db_exec("SET threads TO 1")
+#'
 #' path <- system.file("extdata", "bd", "2.3", "contigs.csv.gz",
 #'   package = "immunread", mustWork = TRUE)
 #' idata <- read_bd(path, schema = c("v_call", "junction_aa"),

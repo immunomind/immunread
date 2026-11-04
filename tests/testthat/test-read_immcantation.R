@@ -1,8 +1,8 @@
 test_that("Immcantation single-cell fixture preserves UMI and read support", {
   path <- fixture_path("immcantation", "single-cell.tsv.gz")
   input <- utils::read.delim(path, check.names = FALSE)
-  expect_equal(nrow(input), 162L)
-  expect_equal(length(unique(input$cell_id)), 81L)
+  expect_equal(nrow(input), 80L)
+  expect_equal(length(unique(input$cell_id)), 40L)
   expect_false("duplicate_count" %in% names(input))
 
   schema <- immundata::make_receptor_schema(
@@ -11,8 +11,8 @@ test_that("Immcantation single-cell fixture preserves UMI and read support", {
   idata <- read_immcantation(path, schema, mode = "sc", output_folder = tempfile())
   result <- annotations(idata)
   expect_s3_class(idata, "ImmunData")
-  expect_equal(nrow(result), 79L)
-  expect_equal(length(unique(result$cell_id)), 79L)
+  expect_equal(nrow(result), 38L)
+  expect_equal(length(unique(result$cell_id)), 38L)
   expect_false(anyNA(result$junction_aa))
   expect_false(any(result$junction_aa %in% c("", "NA", "None")))
 

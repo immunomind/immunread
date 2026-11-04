@@ -60,6 +60,9 @@ prepare_airr <- function(data, schema, column_profile, repertoire_schema, count_
 #'   'immundata' adds its own analysis columns, and `manifest` can add sample
 #'   annotations under their original column names.
 #' @examples
+#' # Use one thread for this small example.
+#' duckplyr::db_exec("SET threads TO 1")
+#'
 #' path <- system.file("extdata", "airr", "2.0-bulk", "contigs.tsv.gz",
 #'   package = "immunread", mustWork = TRUE)
 #' idata <- read_airr_bulk(path, schema = c("v_call", "junction_aa"),
@@ -111,6 +114,9 @@ read_airr_bulk <- function(path, schema, manifest = NULL,
 #'   'immundata' adds its own analysis columns, and `manifest` can add sample
 #'   annotations under their original column names.
 #' @examples
+#' # Use one thread for this small example.
+#' duckplyr::db_exec("SET threads TO 1")
+#'
 #' path <- system.file("extdata", "airr", "2.0-sc", "contigs.tsv.gz",
 #'   package = "immunread", mustWork = TRUE)
 #' schema <- immundata::make_receptor_schema(

@@ -45,6 +45,9 @@
 #'   the columns included in that profile. The available columns also depend
 #'   on the input and `schema`.
 #' @examples
+#' # Use one thread for this small example.
+#' duckplyr::db_exec("SET threads TO 1")
+#'
 #' path <- system.file("extdata", "wat3r", "1.3", "contigs.csv.gz",
 #'   package = "immunread", mustWork = TRUE)
 #' idata <- read_wat3r(path, schema = c("v_call", "junction_aa"),

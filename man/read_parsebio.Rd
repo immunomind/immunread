@@ -81,6 +81,9 @@ TRB chain. Rows without a CDR3 amino acid sequence are excluded before
 'immundata' selects the chains used to construct receptors.
 }
 \examples{
+# Use one thread for this small example.
+duckplyr::db_exec("SET threads TO 1")
+
 path <- system.file("extdata", "parsebio", "1.6.1", "contigs.csv.gz",
   package = "immunread", mustWork = TRUE)
 idata <- read_parsebio(path, schema = c("v_call", "junction_aa"),

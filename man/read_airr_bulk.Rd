@@ -77,6 +77,9 @@ a receptor feature required by \code{schema}. These changes do not apply to
 other source annotations or to metadata added from \code{manifest}.
 }
 \examples{
+# Use one thread for this small example.
+duckplyr::db_exec("SET threads TO 1")
+
 path <- system.file("extdata", "airr", "2.0-bulk", "contigs.tsv.gz",
   package = "immunread", mustWork = TRUE)
 idata <- read_airr_bulk(path, schema = c("v_call", "junction_aa"),

@@ -1,3 +1,17 @@
+test_that("lazy normalization matches complete missing markers only", {
+  markers <- c("", "NA", "None", "NaN", "nan", "<NA>", "*", NA_character_)
+  sequences <- c("CASSF", "NAF", "NoneF", "NaNF", "nanF", "<NA>F", "*F", " NA ", "NA\n")
+  input <- data.frame(
+    junction_aa = c(markers, sequences), custom_note = c(markers, sequences)
+  )
+  data <- duckplyr::as_duckdb_tibble(input, prudence = "stingy")
+  normalized <- normalize_airr_fields(data)
+  expect_s3_class(normalized, "duckplyr_df")
+  result <- dplyr::collect(normalized)
+  expect_equal(result$junction_aa, c(rep(NA_character_, length(markers)), sequences))
+  expect_equal(result$custom_note, input$custom_note)
+})
+
 test_that("reserved missing markers do not become receptor features or metadata edits", {
   path <- tempfile(fileext = ".tsv")
   utils::write.table(data.frame(

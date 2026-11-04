@@ -38,6 +38,9 @@
 #'   for observed, simulated, or inferred origin. Adaptive abundance values are
 #'   copy counts, not UMI counts, and the reader does not infer UMIs.
 #' @examples
+#' # Use one thread for this small example.
+#' duckplyr::db_exec("SET threads TO 1")
+#'
 #' path <- system.file("extdata", "adaptive", "analyzer", "contigs.tsv.gz",
 #'   package = "immunread", mustWork = TRUE)
 #' idata <- read_adaptive(path, schema = c("v_call", "junction_aa"),
