@@ -15,32 +15,58 @@ read_airr_sc(
 )
 }
 \arguments{
-\item{path}{Repertoire file paths, glob, or \code{"<manifest>"}.}
+\item{path}{One or more repertoire file paths or a file pattern such as
+\code{"data/*.tsv"}. Use \code{"<manifest>"} to read the paths from \code{manifest}.}
 
-\item{schema}{Receptor features or an \code{\link[immundata:make_receptor_schema]{immundata::make_receptor_schema()}}
-result.}
+\item{schema}{Column names that define receptor identity, such as
+\code{c("v_call", "junction_aa")}. Use \code{\link[immundata:make_receptor_schema]{immundata::make_receptor_schema()}} to
+also select one chain or a pair of chains from each cell.}
 
-\item{manifest}{Optional native immundata manifest.}
+\item{manifest}{An optional data frame with file paths and sample annotations.}
 
-\item{manifest_file_col}{Manifest column containing file paths when
+\item{manifest_file_col}{The name of the manifest column with file paths when
 \code{path = "<manifest>"}.}
 
-\item{column_profile}{Source columns to keep: \code{"minimal"}, \code{"standard"},
-or \code{"full"}.}
+\item{column_profile}{Which input annotations to keep. \code{"minimal"} keeps
+core identifiers, gene calls, junctions, and counts. \code{"standard"} also keeps
+sequence, region, and alignment annotations. \code{"full"} keeps all input
+annotations after the changes described under Value. Columns required by
+\code{schema} and \code{repertoire_schema} are kept with every profile.}
 
-\item{repertoire_schema}{Repertoire grouping passed to
-\code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+\item{repertoire_schema}{Columns that define repertoire groups. This is
+passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
 
-\item{...}{Other arguments passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+\item{...}{Additional arguments passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
 }
 \value{
-An \code{ImmunData} object.
+An \link[immundata:ImmunData]{immundata::ImmunData} object containing the imported single-cell
+repertoire data. If \code{cell_id} is absent, values from \code{barcode} are copied
+into a new \code{cell_id} column. If \code{cell_id} is already present, it is used
+without changing its name. When a source \code{barcode} column is supplied, it
+is also available with \code{column_profile = "full"}.
+
+\strong{Other AIRR column names are kept unchanged.} This includes gene calls,
+\code{locus}, \code{junction}, \code{junction_aa}, \code{duplicate_count}, \code{umi_count}, and
+\code{consensus_count} when present. The function does not rename a count field
+when it uses that field to select chains. These count names describe
+sequence copies, distinct UMIs, and reads used to build a consensus or
+contig in AIRR terminology. The reader also keeps \code{cdr3} and
+\code{cdr3_aa} separate from the junction fields.
+
+The available annotations depend on the input and \code{column_profile}.
+'immundata' adds its own analysis columns, and \code{manifest} can add sample
+annotations under their original column names.
 }
 \description{
-Reads a single-cell AIRR Rearrangement table, maps \code{barcode}
-to \code{cell_id} when needed, and selects chains using their count field.
+Reads a single-cell
+\href{https://docs.airr-community.org/en/stable/datarep/rearrangements.html}{AIRR Rearrangement table}
+and uses its cell identifiers and counts to select receptor chains.
 
-Uses \code{barcode} as \code{cell_id} when \code{cell_id} is absent.
+To select chains, the function uses \code{umi_count} when it is present. If that
+column is absent, it uses \code{duplicate_count}. If both are absent, it uses
+\code{consensus_count}. Missing values in the selected field cause an error even
+when another count field has values. The count and missing-value rules
+described in \code{\link[=read_airr_bulk]{read_airr_bulk()}} also apply here.
 }
 \examples{
 path <- system.file("extdata", "airr", "2.0-sc", "contigs.tsv.gz",
