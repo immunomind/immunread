@@ -1,11 +1,39 @@
 #' @title Read TRUST4 cell tables
-#' @description Reads TRUST4 cell tables, expands embedded chain records, and
-#'   maps their receptor and count fields to AIRR-style columns.
+#' @description Reads TRUST4 cell tables and separates their chain records
+#'   into rows with AIRR names for the gene, sequence, and count annotations.
 #'
-#' Each supplied primary or secondary chain becomes a row. `immundata` ranks
-#' chains when constructing receptors. The embedded `read_cnt` becomes
-#' `consensus_count`, following TRUST4's AIRR export.
+#' The [TRUST4 barcode report format](https://github.com/liulab-dfci/TRUST4#10x-genomics-data-and-barcode-based-single-cell-data)
+#' describes the embedded comma-separated chain fields. This reader expects
+#' the tabular layout in the bundled example, with `X.barcode`, `chain1`,
+#' `chain2`, `secondary_chain1`, and `secondary_chain2` columns.
+#' See the TRUST4 paper, \doi{10.1038/s41592-021-01142-2}.
+#'
+#' Each non-empty primary or secondary chain record becomes a row before
+#' 'immundata' selects the chains used to construct receptors.
 #' @inheritParams read_airr_sc
+#' @return An [immundata::ImmunData] object containing the imported repertoires
+#'   and available chain annotations. The reader splits `chain1`, `chain2`,
+#'   `secondary_chain1`, and `secondary_chain2` at semicolons and makes each
+#'   record into its own row. Within each record, comma-separated
+#'   fields 1 through 8 map in order to `v_call`, `d_call`, `j_call`, `c_call`,
+#'   `junction`, `junction_aa`, `source_read_count`, and `sequence_id`.
+#'   `X.barcode` maps to `cell_id`, and the field containing the record is
+#'   recorded as `source_chain`. The `locus` value comes from the first three
+#'   characters of `v_call`, or from `j_call` when `v_call` is `*`.
+#'
+#'   The read-support estimate in field 7 becomes `source_read_count`. Its
+#'   fractional part is removed to give `consensus_count`, matching the
+#'   upstream AIRR exporter. For example, a read-support estimate of 7.9 gives
+#'   `consensus_count` 7. TRUST4 provides no separate UMI count, so
+#'   `consensus_count` is used for chain ranking. Empty and `*` chain fields
+#'   are skipped. With `column_profile = "full"`, original input columns such as `X.barcode` and
+#'   the embedded chain fields remain under their original names, and the
+#'   mapped columns are added. **These input column names are kept unchanged.**
+#'   `source_read_count` is also available with this profile. The contents of
+#'   the chain fields are split into the mapped columns above.
+#'   With `column_profile = "minimal"` or `"standard"`, the reader
+#'   keeps the columns included in that profile. The available columns also
+#'   depend on the input and `schema`.
 #' @examples
 #' path <- system.file("extdata", "trust4", "1.1.7", "contigs.csv.gz",
 #'   package = "immunread", mustWork = TRUE)
@@ -54,7 +82,8 @@ read_trust4 <- function(path, schema, manifest = NULL,
       v_call = !!field(1), d_call = !!field(2), j_call = !!field(3),
       c_call = !!field(4), junction = !!field(5),
       junction_aa = !!field(6), sequence_id = !!field(8),
-      consensus_count = as.integer(!!field(7)),
+      source_read_count = dd$cast_to_type(!!field(7), 0.0),
+      consensus_count = dd$floor(dd$cast_to_type(!!field(7), 0.0)),
       locus = dplyr::if_else(v_call == "*", substr(j_call, 1L, 3L),
         substr(v_call, 1L, 3L)
       )
@@ -63,7 +92,7 @@ read_trust4 <- function(path, schema, manifest = NULL,
   prepare <- function(data, manifest = NULL) {
     profile_columns(
       keep_productive(normalize(data)), schema, column_profile,
-      repertoire_schema
+      repertoire_schema, count_col = "consensus_count"
     )
   }
   immundata::read_repertoires(

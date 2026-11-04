@@ -15,31 +15,70 @@ read_parsebio(
 )
 }
 \arguments{
-\item{path}{Repertoire file paths, glob, or \code{"<manifest>"}.}
+\item{path}{One or more repertoire file paths or a file pattern such as
+\code{"data/*.tsv"}. Use \code{"<manifest>"} to read the paths from \code{manifest}.}
 
-\item{schema}{Receptor features or an \code{\link[immundata:make_receptor_schema]{immundata::make_receptor_schema()}}
-result.}
+\item{schema}{Column names that define receptor identity, such as
+\code{c("v_call", "junction_aa")}. Use \code{\link[immundata:make_receptor_schema]{immundata::make_receptor_schema()}} to
+also select one chain or a pair of chains from each cell.}
 
-\item{manifest}{Optional native immundata manifest.}
+\item{manifest}{An optional data frame with file paths and sample annotations.}
 
-\item{manifest_file_col}{Manifest column containing file paths when
+\item{manifest_file_col}{The name of the manifest column with file paths when
 \code{path = "<manifest>"}.}
 
-\item{column_profile}{Source columns to keep: \code{"minimal"}, \code{"standard"},
-or \code{"full"}.}
+\item{column_profile}{Which input annotations to keep. \code{"minimal"} keeps
+core identifiers, gene calls, junctions, and counts. \code{"standard"} also keeps
+sequence, region, and alignment annotations. \code{"full"} keeps all input
+annotations after the changes described under Value. Columns required by
+\code{schema} and \code{repertoire_schema} are kept with every profile.}
 
-\item{repertoire_schema}{Repertoire grouping passed to
-\code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+\item{repertoire_schema}{Columns that define repertoire groups. This is
+passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
 
-\item{...}{Other arguments passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+\item{...}{Additional arguments passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+}
+\value{
+An \link[immundata:ImmunData]{immundata::ImmunData} object containing the imported repertoires
+and available chain annotations. For each of \code{TRA}, \code{TRB},
+\code{secondary_TRA}, and \code{secondary_TRB}, the reader copies \verb{*_V} to \code{v_call},
+\verb{*_D} to \code{d_call}, \verb{*_J} to \code{j_call}, and \verb{*_C} to \code{c_call}.
+It copies \verb{*_cdr3_aa} to \code{junction_aa} and \verb{*_transcript_count} to \code{umi_count} for chain
+ranking and \verb{*_read_count} to \code{consensus_count}. \code{Barcode} maps to
+\code{cell_id}, and the group name supplies \code{locus} after removing the
+\code{secondary_} prefix. The group name is also recorded in \code{source_chain}.
+
+AIRR output columns that are already present keep their names and are used
+instead of the corresponding source columns. The reader always sets
+\code{locus} and \code{source_chain} from the chain group.
+
+If no group has a read-count column,
+\code{consensus_count} is absent. If some groups have that column, chains from
+groups without it have \code{NA} for \code{consensus_count}. Missing optional gene
+calls also have \code{NA}.
+
+With \code{column_profile = "full"}, original source columns,
+including \code{Barcode} and the wide chain columns, remain under their original
+names and the mapped columns are added. \strong{These source column names are
+kept unchanged.} With \code{column_profile = "minimal"} or \code{"standard"}, the
+reader keeps the columns included in that profile. The available columns
+also depend on the input and \code{schema}.
 }
 \description{
-Reads wide Parse Biosciences TCR tables, emits one row per
-supplied chain, and maps the result to AIRR-style columns.
+Reads Parse Biosciences TCR tables in which each row describes
+one cell. The reader separates the chains into rows and uses AIRR names
+for the output annotations.
 
-Each supplied primary or secondary TRA/TRB chain becomes a row. \code{immundata}
-ranks chains when constructing receptors. Transcript counts are used for
-ranking; source read counts remain separate.
+See Parse's
+\href{https://resources.parsebiosciences.com/support-suite/hc/en-us/articles/44260645430676-understanding-the-anndata-scanpy-object-that-is-downloadable-from-trailmaker-insights-module}{public immune annotation overview}
+for descriptions of the wide per-cell fields. This reader
+expects the wide layout with \code{Barcode}, \verb{TRA_*}, \verb{TRB_*}, and optional
+\verb{secondary_TRA_*} / \verb{secondary_TRB_*} columns. For AIRR-formatted
+\code{tcr_annotation_airr.tsv} exports, use \code{\link[=read_airr_sc]{read_airr_sc()}}.
+
+The reader prepares one row for each supplied primary or secondary TRA or
+TRB chain. Rows without a CDR3 amino acid sequence are excluded before
+'immundata' selects the chains used to construct receptors.
 }
 \examples{
 path <- system.file("extdata", "parsebio", "1.6.1", "contigs.csv.gz",

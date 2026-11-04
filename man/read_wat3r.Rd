@@ -15,30 +15,77 @@ read_wat3r(
 )
 }
 \arguments{
-\item{path}{Repertoire file paths, glob, or \code{"<manifest>"}.}
+\item{path}{One or more repertoire file paths or a file pattern such as
+\code{"data/*.tsv"}. Use \code{"<manifest>"} to read the paths from \code{manifest}.}
 
-\item{schema}{Receptor features or an \code{\link[immundata:make_receptor_schema]{immundata::make_receptor_schema()}}
-result.}
+\item{schema}{Column names that define receptor identity, such as
+\code{c("v_call", "junction_aa")}. Use \code{\link[immundata:make_receptor_schema]{immundata::make_receptor_schema()}} to
+also select one chain or a pair of chains from each cell.}
 
-\item{manifest}{Optional native immundata manifest.}
+\item{manifest}{An optional data frame with file paths and sample annotations.}
 
-\item{manifest_file_col}{Manifest column containing file paths when
+\item{manifest_file_col}{The name of the manifest column with file paths when
 \code{path = "<manifest>"}.}
 
-\item{column_profile}{Source columns to keep: \code{"minimal"}, \code{"standard"},
-or \code{"full"}.}
+\item{column_profile}{Which input annotations to keep. \code{"minimal"} keeps
+core identifiers, gene calls, junctions, and counts. \code{"standard"} also keeps
+sequence, region, and alignment annotations. \code{"full"} keeps all input
+annotations after the changes described under Value. Columns required by
+\code{schema} and \code{repertoire_schema} are kept with every profile.}
 
-\item{repertoire_schema}{Repertoire grouping passed to
-\code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+\item{repertoire_schema}{Columns that define repertoire groups. This is
+passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
 
-\item{...}{Other arguments passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+\item{...}{Additional arguments passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+}
+\value{
+An \link[immundata:ImmunData]{immundata::ImmunData} object containing the imported repertoires
+and available chain annotations. Gene column names are converted for each
+chain group as follows:
+\itemize{
+\item For TRA, \code{TRAV} becomes \code{v_call} and \code{TRAJ} becomes \code{j_call}.
+\item For TRB, \code{TRBV} becomes \code{v_call}, \code{TRBD} becomes \code{d_call}, and \code{TRBJ}
+becomes \code{j_call}.
+\item For secondary TRA, \code{TRAV.2} becomes \code{v_call} and \code{TRAJ.2} becomes \code{j_call}.
+}
+
+The matching \code{TRA_CDR3nuc}, \code{TRB_CDR3nuc}, and \code{TRA.2_CDR3nuc} values map
+to \code{cdr3}. These nucleotide sequences exclude conserved anchor codons.
+The matching \verb{*_CDR3} amino acid sequences map to \code{junction_aa} and include
+the conserved amino acids. WAT3R does not supply a nucleotide \code{junction},
+so this reader does not create one. The matching \verb{*_nReads} values map to
+\code{consensus_count}. \verb{*_CDR3_UMIcount} values map to \code{umi_count} for
+chain ranking. \code{BC} maps to \code{cell_id}. The chain group supplies \code{locus}
+(\code{TRA.2} is recorded as \code{TRA}) and \code{source_chain}.
+
+AIRR output columns that are already present keep their names and are used
+instead of the corresponding source columns. The reader always sets
+\code{locus} and \code{source_chain} from the chain group.
+
+If no group has an \code{nReads} column,
+\code{consensus_count} is absent. If some groups have that column, chains from
+groups without it have \code{NA} for \code{consensus_count}. Missing optional gene
+calls also have \code{NA}.
+
+With \code{column_profile = "full"}, original source columns, including \code{BC}
+and the wide chain columns, remain under their original names and the
+mapped columns are added. \strong{These source column names are kept unchanged.}
+With \code{column_profile = "minimal"} or \code{"standard"}, the reader keeps
+the columns included in that profile. The available columns also depend
+on the input and \code{schema}.
 }
 \description{
-Reads wide WAT3R TCR tables, emits one row per supplied chain,
-and maps their receptor and UMI fields to AIRR-style columns.
+Reads WAT3R
+\href{https://github.com/mainciburu/WAT3R#downstream}{barcode_results.csv tables}
+in which each row describes one cell. The reader separates the chains into
+rows and uses AIRR names for the output annotations.
 
-Each supplied TRA, TRB, or secondary TRA chain becomes a row. \code{immundata}
-ranks chains when constructing receptors. UMI and read counts remain separate.
+The input contains \code{BC}, \verb{TRA_*}, \verb{TRB_*}, and optional \verb{TRA.2_*} columns.
+See the WAT3R paper, \doi{10.1093/bioinformatics/btac382}.
+
+The reader prepares one row for each supplied TRA, TRB, or secondary TRA
+chain. Rows without a CDR3 amino acid sequence are excluded before
+'immundata' selects the chains used to construct receptors.
 }
 \examples{
 path <- system.file("extdata", "wat3r", "1.3", "contigs.csv.gz",

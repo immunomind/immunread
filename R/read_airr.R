@@ -1,29 +1,64 @@
 # AIRR inputs already use canonical field names. Only the productive filter and
 # requested column projection are needed before immundata builds receptors.
-prepare_airr <- function(data, schema, column_profile, repertoire_schema) {
+prepare_airr <- function(data, schema, column_profile, repertoire_schema, count_col) {
   if (!"productive" %in% names(data)) {
     stop("Missing required column: productive", call. = FALSE)
   }
   data <- keep_productive(data)
-  profile_columns(data, schema, column_profile, repertoire_schema)
+  profile_columns(data, schema, column_profile, repertoire_schema, count_col)
 }
 
 #' @title Read an AIRR Rearrangement table as bulk repertoire data
-#' @description Reads a bulk AIRR Rearrangement table, filters productive
-#'   rows, and passes its canonical AIRR fields to `immundata`.
+#' @description Reads a bulk
+#'   [AIRR Rearrangement table](https://docs.airr-community.org/en/stable/datarep/rearrangements.html)
+#'   and keeps productive sequences for repertoire analysis with 'immundata'.
 #'
-#' @param path Repertoire file paths, glob, or `"<manifest>"`.
-#' @param schema Receptor features or an [immundata::make_receptor_schema()]
-#'   result.
-#' @param manifest Optional native immundata manifest.
-#' @param manifest_file_col Manifest column containing file paths when
+#' @param path One or more repertoire file paths or a file pattern such as
+#'   `"data/*.tsv"`. Use `"<manifest>"` to read the paths from `manifest`.
+#' @param schema Column names that define receptor identity, such as
+#'   `c("v_call", "junction_aa")`. Use [immundata::make_receptor_schema()] to
+#'   also select one chain or a pair of chains from each cell.
+#' @param manifest An optional data frame with file paths and sample annotations.
+#' @param manifest_file_col The name of the manifest column with file paths when
 #'   `path = "<manifest>"`.
-#' @param column_profile Source columns to keep: `"minimal"`, `"standard"`,
-#'   or `"full"`.
-#' @param repertoire_schema Repertoire grouping passed to
-#'   [immundata::read_repertoires()].
-#' @param ... Other arguments passed to [immundata::read_repertoires()].
-#' @return An `ImmunData` object.
+#' @param column_profile Which input annotations to keep. `"minimal"` keeps
+#'   core identifiers, gene calls, junctions, and counts. `"standard"` also keeps
+#'   sequence, region, and alignment annotations. `"full"` keeps all input
+#'   annotations after the changes described under Value. Columns required by
+#'   `schema` and `repertoire_schema` are kept with every profile.
+#' @param repertoire_schema Columns that define repertoire groups. This is
+#'   passed to [immundata::read_repertoires()].
+#' @param ... Additional arguments passed to [immundata::read_repertoires()].
+#'
+#' @details To measure bulk abundance, the function uses `duplicate_count` when
+#'   that column is present. It uses `umi_count` when `duplicate_count` is absent.
+#'   When neither column is present, each retained row represents one chain
+#'   observation without a supplied abundance value.
+#'
+#'   Count values must be finite whole numbers that are zero or greater. An
+#'   optional count field can contain missing values, but the selected abundance
+#'   field must have a value for every productive input row. Missing abundance
+#'   causes an error and is not replaced with zero or one.
+#'
+#'   In recognized sequence and count fields, text such as `"NA"` and `"None"`
+#'   becomes a missing value (`NA` in R). A row is excluded if it has no value for
+#'   a receptor feature required by `schema`. These changes do not apply to
+#'   other source annotations or to metadata added from `manifest`.
+#' @return An [immundata::ImmunData] object containing the imported repertoire
+#'   data. The chain annotations keep the supplied AIRR column names, including
+#'   `v_call`, `d_call`, `j_call`, `junction`, and `junction_aa` when present.
+#'
+#'   **Count column names are kept unchanged.** `duplicate_count`, `umi_count`,
+#'   and `consensus_count` remain separate fields. In AIRR terminology, they
+#'   describe sequence copies, distinct UMIs, and reads used to build a consensus
+#'   or contig. Choosing a count field for abundance does not rename the other
+#'   fields or change their units.
+#'   The reader also keeps `cdr3` and `cdr3_aa` separate from the junction fields.
+#'   It does not use one name as a replacement for another.
+#'
+#'   The available annotations depend on the input and `column_profile`.
+#'   'immundata' adds its own analysis columns, and `manifest` can add sample
+#'   annotations under their original column names.
 #' @examples
 #' path <- system.file("extdata", "airr", "2.0-bulk", "contigs.tsv.gz",
 #'   package = "immunread", mustWork = TRUE)
@@ -36,7 +71,7 @@ read_airr_bulk <- function(path, schema, manifest = NULL,
   columns <- source_columns(path, manifest, manifest_file_col)
   count_col <- first_column(columns, c("duplicate_count", "umi_count"))
   prepare <- function(data, manifest = NULL) {
-    prepare_airr(data, schema, column_profile, repertoire_schema)
+    prepare_airr(data, schema, column_profile, repertoire_schema, count_col)
   }
   immundata::read_repertoires(
     path, schema,
@@ -47,13 +82,34 @@ read_airr_bulk <- function(path, schema, manifest = NULL,
 }
 
 #' @title Read an AIRR Rearrangement table as single-cell repertoire data
-#' @description Reads a single-cell AIRR Rearrangement table, maps `barcode`
-#'   to `cell_id` when needed, and selects chains using their count field.
+#' @description Reads a single-cell
+#'   [AIRR Rearrangement table](https://docs.airr-community.org/en/stable/datarep/rearrangements.html)
+#'   and uses its cell identifiers and counts to select receptor chains.
 #'
-#' Uses `barcode` as `cell_id` when `cell_id` is absent.
+#' To select chains, the function uses `umi_count` when it is present. If that
+#' column is absent, it uses `duplicate_count`. If both are absent, it uses
+#' `consensus_count`. Missing values in the selected field cause an error even
+#' when another count field has values. The count and missing-value rules
+#' described in [read_airr_bulk()] also apply here.
 #'
 #' @inheritParams read_airr_bulk
-#' @return An `ImmunData` object.
+#' @return An [immundata::ImmunData] object containing the imported single-cell
+#'   repertoire data. If `cell_id` is absent, values from `barcode` are copied
+#'   into a new `cell_id` column. If `cell_id` is already present, it is used
+#'   without changing its name. When a source `barcode` column is supplied, it
+#'   is also available with `column_profile = "full"`.
+#'
+#'   **Other AIRR column names are kept unchanged.** This includes gene calls,
+#'   `locus`, `junction`, `junction_aa`, `duplicate_count`, `umi_count`, and
+#'   `consensus_count` when present. The function does not rename a count field
+#'   when it uses that field to select chains. These count names describe
+#'   sequence copies, distinct UMIs, and reads used to build a consensus or
+#'   contig in AIRR terminology. The reader also keeps `cdr3` and
+#'   `cdr3_aa` separate from the junction fields.
+#'
+#'   The available annotations depend on the input and `column_profile`.
+#'   'immundata' adds its own analysis columns, and `manifest` can add sample
+#'   annotations under their original column names.
 #' @examples
 #' path <- system.file("extdata", "airr", "2.0-sc", "contigs.tsv.gz",
 #'   package = "immunread", mustWork = TRUE)
@@ -72,7 +128,7 @@ read_airr_sc <- function(path, schema, manifest = NULL,
   )
   prepare <- function(data, manifest = NULL) {
     data <- format_aliases(data, c(cell_id = "barcode"))
-    prepare_airr(data, schema, column_profile, repertoire_schema)
+    prepare_airr(data, schema, column_profile, repertoire_schema, rank_col)
   }
   immundata::read_repertoires(
     path, schema,

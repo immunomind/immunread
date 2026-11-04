@@ -1,10 +1,49 @@
 #' @title Read WAT3R TCR tables
-#' @description Reads wide WAT3R TCR tables, emits one row per supplied chain,
-#'   and maps their receptor and UMI fields to AIRR-style columns.
+#' @description Reads WAT3R
+#'   [barcode_results.csv tables](https://github.com/mainciburu/WAT3R#downstream)
+#'   in which each row describes one cell. The reader separates the chains into
+#'   rows and uses AIRR names for the output annotations.
 #'
-#' Each supplied TRA, TRB, or secondary TRA chain becomes a row. `immundata`
-#' ranks chains when constructing receptors. UMI and read counts remain separate.
+#' The input contains `BC`, `TRA_*`, `TRB_*`, and optional `TRA.2_*` columns.
+#' See the WAT3R paper, \doi{10.1093/bioinformatics/btac382}.
+#'
+#' The reader prepares one row for each supplied TRA, TRB, or secondary TRA
+#' chain. Rows without a CDR3 amino acid sequence are excluded before
+#' 'immundata' selects the chains used to construct receptors.
 #' @inheritParams read_airr_sc
+#' @return An [immundata::ImmunData] object containing the imported repertoires
+#'   and available chain annotations. Gene column names are converted for each
+#'   chain group as follows:
+#'
+#'   * For TRA, `TRAV` becomes `v_call` and `TRAJ` becomes `j_call`.
+#'   * For TRB, `TRBV` becomes `v_call`, `TRBD` becomes `d_call`, and `TRBJ`
+#'     becomes `j_call`.
+#'   * For secondary TRA, `TRAV.2` becomes `v_call` and `TRAJ.2` becomes `j_call`.
+#'
+#'   The matching `TRA_CDR3nuc`, `TRB_CDR3nuc`, and `TRA.2_CDR3nuc` values map
+#'   to `cdr3`. These nucleotide sequences exclude conserved anchor codons.
+#'   The matching `*_CDR3` amino acid sequences map to `junction_aa` and include
+#'   the conserved amino acids. WAT3R does not supply a nucleotide `junction`,
+#'   so this reader does not create one. The matching `*_nReads` values map to
+#'   `consensus_count`. `*_CDR3_UMIcount` values map to `umi_count` for
+#'   chain ranking. `BC` maps to `cell_id`. The chain group supplies `locus`
+#'   (`TRA.2` is recorded as `TRA`) and `source_chain`.
+#'
+#'   AIRR output columns that are already present keep their names and are used
+#'   instead of the corresponding source columns. The reader always sets
+#'   `locus` and `source_chain` from the chain group.
+#'
+#'   If no group has an `nReads` column,
+#'   `consensus_count` is absent. If some groups have that column, chains from
+#'   groups without it have `NA` for `consensus_count`. Missing optional gene
+#'   calls also have `NA`.
+#'
+#'   With `column_profile = "full"`, original source columns, including `BC`
+#'   and the wide chain columns, remain under their original names and the
+#'   mapped columns are added. **These source column names are kept unchanged.**
+#'   With `column_profile = "minimal"` or `"standard"`, the reader keeps
+#'   the columns included in that profile. The available columns also depend
+#'   on the input and `schema`.
 #' @examples
 #' path <- system.file("extdata", "wat3r", "1.3", "contigs.csv.gz",
 #'   package = "immunread", mustWork = TRUE)
@@ -23,7 +62,10 @@ read_wat3r <- function(path, schema, manifest = NULL,
     groups <- c("TRA", "TRB", "TRA.2")
     groups <- groups[paste0(groups, "_CDR3") %in% names(data)]
     targets <- c("cell_id", "v_call", "d_call", "j_call",
-                 "junction", "junction_aa")
+                 "cdr3", "junction_aa")
+    if (any(paste0(groups, "_nReads") %in% names(data))) {
+      targets <- c(targets, "consensus_count")
+    }
     if (any(paste0(groups, "_CDR3_UMIcount") %in% names(data))) {
       targets <- c(targets, "umi_count")
     }
@@ -33,12 +75,12 @@ read_wat3r <- function(path, schema, manifest = NULL,
       aliases <- c(cell_id = "BC",
                    v_call = paste0(locus, "V", suffix),
                    j_call = paste0(locus, "J", suffix),
-                   junction = paste0(group, "_CDR3nuc"),
+                   cdr3 = paste0(group, "_CDR3nuc"),
                    junction_aa = paste0(group, "_CDR3"),
-                   umi_count = paste0(group, "_CDR3_UMIcount"))
+                   umi_count = paste0(group, "_CDR3_UMIcount"),
+                   consensus_count = paste0(group, "_nReads"))
       if (group == "TRB") aliases <- c(aliases, d_call = "TRBD")
       format_chain_aliases(data, aliases, targets) |>
-        dplyr::mutate(umi_count = as.integer(umi_count)) |>
         dplyr::mutate(locus = locus, source_chain = group) |>
         dplyr::filter(!is.na(junction_aa), junction_aa != "", junction_aa != "NA")
     })
@@ -46,7 +88,7 @@ read_wat3r <- function(path, schema, manifest = NULL,
   }
   prepare <- function(data, manifest = NULL) {
     profile_columns(keep_productive(normalize(data)), schema, column_profile,
-                    repertoire_schema)
+                    repertoire_schema, count_col = "umi_count")
   }
   immundata::read_repertoires(
     path, schema, manifest = manifest, manifest_file_col = manifest_file_col,

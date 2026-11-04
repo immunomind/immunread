@@ -15,30 +15,63 @@ read_10x(
 )
 }
 \arguments{
-\item{path}{Repertoire file paths, glob, or \code{"<manifest>"}.}
+\item{path}{One or more repertoire file paths or a file pattern such as
+\code{"data/*.tsv"}. Use \code{"<manifest>"} to read the paths from \code{manifest}.}
 
-\item{schema}{Receptor features or an \code{\link[immundata:make_receptor_schema]{immundata::make_receptor_schema()}}
-result.}
+\item{schema}{Column names that define receptor identity, such as
+\code{c("v_call", "junction_aa")}. Use \code{\link[immundata:make_receptor_schema]{immundata::make_receptor_schema()}} to
+also select one chain or a pair of chains from each cell.}
 
-\item{manifest}{Optional native immundata manifest.}
+\item{manifest}{An optional data frame with file paths and sample annotations.}
 
-\item{manifest_file_col}{Manifest column containing file paths when
+\item{manifest_file_col}{The name of the manifest column with file paths when
 \code{path = "<manifest>"}.}
 
-\item{column_profile}{Source columns to keep: \code{"minimal"}, \code{"standard"},
-or \code{"full"}.}
+\item{column_profile}{Which input annotations to keep. \code{"minimal"} keeps
+core identifiers, gene calls, junctions, and counts. \code{"standard"} also keeps
+sequence, region, and alignment annotations. \code{"full"} keeps all input
+annotations after the changes described under Value. Columns required by
+\code{schema} and \code{repertoire_schema} are kept with every profile.}
 
-\item{repertoire_schema}{Repertoire grouping passed to
-\code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+\item{repertoire_schema}{Columns that define repertoire groups. This is
+passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
 
-\item{...}{Other arguments passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+\item{...}{Additional arguments passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+}
+\value{
+An \link[immundata:ImmunData]{immundata::ImmunData} object containing the imported 10x
+contigs. Source columns are copied to the AIRR output column names below
+when those output columns are not already present. Existing AIRR output
+column names are kept. The full profile also includes source columns,
+except where the region and CDR3 fields are renamed or removed as described
+below.
+
+The reader maps \code{barcode} to \code{cell_id}, \code{contig_id} to \code{sequence_id}, and
+\code{chain} to \code{locus}. It maps \code{v_gene}, \code{d_gene}, \code{j_gene}, and \code{c_gene} to
+\code{v_call}, \code{d_call}, \code{j_call}, and \code{c_call}. It maps \code{cdr3_nt} to
+\code{junction}, \code{cdr3} to \code{junction_aa}, \code{umis} to \code{umi_count}, and \code{reads} to
+\code{consensus_count}.
+
+For each of \code{fwr1}, \code{cdr1}, \code{fwr2}, \code{cdr2}, \code{fwr3}, and \code{fwr4}, the source
+name without \verb{_aa} or \verb{_nt} contains amino acids. For example, when both
+source fields are present, \code{fwr1} is copied to \code{fwr1_aa} and \code{fwr1_nt} is
+copied to the AIRR output column \code{fwr1}. This same pattern applies to all
+six regions. Source values replace any existing region output fields. If
+the source name without a suffix is present without a matching \verb{_nt} field,
+that name is removed after the amino-acid copy is made. The CDR3 source
+columns are renamed \code{source_cdr3} and \code{source_cdr3_nt} when present.
+\strong{Column names kept unchanged:} \code{productive} keeps its source name. The
+reader uses this field to remove unproductive contigs when it is supplied.
+\code{umi_count} records distinct UMIs, and \code{consensus_count} records supporting
+reads. Other source columns
+keep their names in the full profile. The selected chains in the returned
+object depend on the schema and count settings passed to \code{immundata}.
 }
 \description{
-Reads 10x Genomics V(D)J contig annotations and maps their
+Reads 10x Genomics V(D)J
+\href{https://www.10xgenomics.com/support/software/cell-ranger/latest/analysis/outputs/cr-5p-outputs-annotations-vdj}{contig annotation CSV files}
+such as \code{filtered_contig_annotations.csv} and maps their
 barcode, locus, gene, sequence, and count fields to AIRR-style columns.
-
-Supplied secondary chains are retained; \code{immundata} ranks chains when
-constructing receptors. \code{umis} and \code{reads} remain distinct counts.
 }
 \examples{
 path <- system.file("extdata", "10x", "9.0.1", "contigs.csv.gz",

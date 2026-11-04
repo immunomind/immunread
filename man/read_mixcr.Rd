@@ -15,30 +15,57 @@ read_mixcr(
 )
 }
 \arguments{
-\item{path}{Repertoire file paths, glob, or \code{"<manifest>"}.}
+\item{path}{One or more repertoire file paths or a file pattern such as
+\code{"data/*.tsv"}. Use \code{"<manifest>"} to read the paths from \code{manifest}.}
 
-\item{schema}{Receptor features or an \code{\link[immundata:make_receptor_schema]{immundata::make_receptor_schema()}}
-result.}
+\item{schema}{Column names that define receptor identity, such as
+\code{c("v_call", "junction_aa")}. Use \code{\link[immundata:make_receptor_schema]{immundata::make_receptor_schema()}} to
+also select one chain or a pair of chains from each cell.}
 
-\item{manifest}{Optional native immundata manifest.}
+\item{manifest}{An optional data frame with file paths and sample annotations.}
 
-\item{manifest_file_col}{Manifest column containing file paths when
+\item{manifest_file_col}{The name of the manifest column with file paths when
 \code{path = "<manifest>"}.}
 
-\item{column_profile}{Source columns to keep: \code{"minimal"}, \code{"standard"},
-or \code{"full"}.}
+\item{column_profile}{Which input annotations to keep. \code{"minimal"} keeps
+core identifiers, gene calls, junctions, and counts. \code{"standard"} also keeps
+sequence, region, and alignment annotations. \code{"full"} keeps all input
+annotations after the changes described under Value. Columns required by
+\code{schema} and \code{repertoire_schema} are kept with every profile.}
 
-\item{repertoire_schema}{Repertoire grouping passed to
-\code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+\item{repertoire_schema}{Columns that define repertoire groups. This is
+passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
 
-\item{...}{Other arguments passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+\item{...}{Additional arguments passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+}
+\value{
+An \link[immundata:ImmunData]{immundata::ImmunData} object containing the imported MiXCR
+single-cell clones. The reader copies source fields to the AIRR output
+column names below when those output columns are not already present.
+Existing AIRR output column names are kept. In the full profile, source
+columns remain alongside the output columns.
+
+\code{cellGroup} is copied to \code{cell_id}, and \code{topChains} is copied to \code{locus}.
+\code{allVHitsWithScore}, \code{allDHitsWithScore}, and \code{allJHitsWithScore} are copied
+to \code{v_call}, \code{d_call}, and \code{j_call}. Scores in parentheses, such as \code{(123)},
+are removed from the output gene values, including values in existing gene output
+columns. \code{nSeqCDR3} is copied to \code{junction}, and \code{aaSeqCDR3} to
+\code{junction_aa}. \code{uniqueMoleculeCount} is copied to \code{umi_count}, and
+\code{readCount} to \code{consensus_count}. The reader does not copy \code{readCount} to
+\code{duplicate_count} or infer that count from reads. \strong{Column names kept
+unchanged:} \code{duplicate_count} and \code{productive} keep their names when
+present. Rows that are not productive are filtered out when that column is
+supplied. Other source columns keep their names in the full profile.
 }
 \description{
-Reads MiXCR clone tables and maps their cell, chain, gene,
+Reads MiXCR
+\href{https://mixcr.com/mixcr/reference/mixcr-export/#single-cell-libraries}{single-cell clone exports}
+and maps their cell, chain, gene,
 sequence, and count fields to AIRR-style columns.
 
-Supplied secondary chains are retained; \code{immundata} ranks chains when
-constructing receptors. Molecule and read counts remain distinct.
+The input must have \code{cellGroup}, \code{topChains}, and \code{uniqueMoleculeCount}
+columns, as in the bundled MiXCR 4.7.0 example. Exported column names depend on
+the MiXCR version and export options.
 }
 \examples{
 path <- system.file("extdata", "mixcr", "4.7.0", "contigs.csv.gz",

@@ -15,30 +15,66 @@ read_airr_bulk(
 )
 }
 \arguments{
-\item{path}{Repertoire file paths, glob, or \code{"<manifest>"}.}
+\item{path}{One or more repertoire file paths or a file pattern such as
+\code{"data/*.tsv"}. Use \code{"<manifest>"} to read the paths from \code{manifest}.}
 
-\item{schema}{Receptor features or an \code{\link[immundata:make_receptor_schema]{immundata::make_receptor_schema()}}
-result.}
+\item{schema}{Column names that define receptor identity, such as
+\code{c("v_call", "junction_aa")}. Use \code{\link[immundata:make_receptor_schema]{immundata::make_receptor_schema()}} to
+also select one chain or a pair of chains from each cell.}
 
-\item{manifest}{Optional native immundata manifest.}
+\item{manifest}{An optional data frame with file paths and sample annotations.}
 
-\item{manifest_file_col}{Manifest column containing file paths when
+\item{manifest_file_col}{The name of the manifest column with file paths when
 \code{path = "<manifest>"}.}
 
-\item{column_profile}{Source columns to keep: \code{"minimal"}, \code{"standard"},
-or \code{"full"}.}
+\item{column_profile}{Which input annotations to keep. \code{"minimal"} keeps
+core identifiers, gene calls, junctions, and counts. \code{"standard"} also keeps
+sequence, region, and alignment annotations. \code{"full"} keeps all input
+annotations after the changes described under Value. Columns required by
+\code{schema} and \code{repertoire_schema} are kept with every profile.}
 
-\item{repertoire_schema}{Repertoire grouping passed to
-\code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+\item{repertoire_schema}{Columns that define repertoire groups. This is
+passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
 
-\item{...}{Other arguments passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+\item{...}{Additional arguments passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
 }
 \value{
-An \code{ImmunData} object.
+An \link[immundata:ImmunData]{immundata::ImmunData} object containing the imported repertoire
+data. The chain annotations keep the supplied AIRR column names, including
+\code{v_call}, \code{d_call}, \code{j_call}, \code{junction}, and \code{junction_aa} when present.
+
+\strong{Count column names are kept unchanged.} \code{duplicate_count}, \code{umi_count},
+and \code{consensus_count} remain separate fields. In AIRR terminology, they
+describe sequence copies, distinct UMIs, and reads used to build a consensus
+or contig. Choosing a count field for abundance does not rename the other
+fields or change their units.
+The reader also keeps \code{cdr3} and \code{cdr3_aa} separate from the junction fields.
+It does not use one name as a replacement for another.
+
+The available annotations depend on the input and \code{column_profile}.
+'immundata' adds its own analysis columns, and \code{manifest} can add sample
+annotations under their original column names.
 }
 \description{
-Reads a bulk AIRR Rearrangement table, filters productive
-rows, and passes its canonical AIRR fields to \code{immundata}.
+Reads a bulk
+\href{https://docs.airr-community.org/en/stable/datarep/rearrangements.html}{AIRR Rearrangement table}
+and keeps productive sequences for repertoire analysis with 'immundata'.
+}
+\details{
+To measure bulk abundance, the function uses \code{duplicate_count} when
+that column is present. It uses \code{umi_count} when \code{duplicate_count} is absent.
+When neither column is present, each retained row represents one chain
+observation without a supplied abundance value.
+
+Count values must be finite whole numbers that are zero or greater. An
+optional count field can contain missing values, but the selected abundance
+field must have a value for every productive input row. Missing abundance
+causes an error and is not replaced with zero or one.
+
+In recognized sequence and count fields, text such as \code{"NA"} and \code{"None"}
+becomes a missing value (\code{NA} in R). A row is excluded if it has no value for
+a receptor feature required by \code{schema}. These changes do not apply to
+other source annotations or to metadata added from \code{manifest}.
 }
 \examples{
 path <- system.file("extdata", "airr", "2.0-bulk", "contigs.tsv.gz",

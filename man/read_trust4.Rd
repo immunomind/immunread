@@ -15,31 +15,66 @@ read_trust4(
 )
 }
 \arguments{
-\item{path}{Repertoire file paths, glob, or \code{"<manifest>"}.}
+\item{path}{One or more repertoire file paths or a file pattern such as
+\code{"data/*.tsv"}. Use \code{"<manifest>"} to read the paths from \code{manifest}.}
 
-\item{schema}{Receptor features or an \code{\link[immundata:make_receptor_schema]{immundata::make_receptor_schema()}}
-result.}
+\item{schema}{Column names that define receptor identity, such as
+\code{c("v_call", "junction_aa")}. Use \code{\link[immundata:make_receptor_schema]{immundata::make_receptor_schema()}} to
+also select one chain or a pair of chains from each cell.}
 
-\item{manifest}{Optional native immundata manifest.}
+\item{manifest}{An optional data frame with file paths and sample annotations.}
 
-\item{manifest_file_col}{Manifest column containing file paths when
+\item{manifest_file_col}{The name of the manifest column with file paths when
 \code{path = "<manifest>"}.}
 
-\item{column_profile}{Source columns to keep: \code{"minimal"}, \code{"standard"},
-or \code{"full"}.}
+\item{column_profile}{Which input annotations to keep. \code{"minimal"} keeps
+core identifiers, gene calls, junctions, and counts. \code{"standard"} also keeps
+sequence, region, and alignment annotations. \code{"full"} keeps all input
+annotations after the changes described under Value. Columns required by
+\code{schema} and \code{repertoire_schema} are kept with every profile.}
 
-\item{repertoire_schema}{Repertoire grouping passed to
-\code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+\item{repertoire_schema}{Columns that define repertoire groups. This is
+passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
 
-\item{...}{Other arguments passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+\item{...}{Additional arguments passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+}
+\value{
+An \link[immundata:ImmunData]{immundata::ImmunData} object containing the imported repertoires
+and available chain annotations. The reader splits \code{chain1}, \code{chain2},
+\code{secondary_chain1}, and \code{secondary_chain2} at semicolons and makes each
+record into its own row. Within each record, comma-separated
+fields 1 through 8 map in order to \code{v_call}, \code{d_call}, \code{j_call}, \code{c_call},
+\code{junction}, \code{junction_aa}, \code{source_read_count}, and \code{sequence_id}.
+\code{X.barcode} maps to \code{cell_id}, and the field containing the record is
+recorded as \code{source_chain}. The \code{locus} value comes from the first three
+characters of \code{v_call}, or from \code{j_call} when \code{v_call} is \code{*}.
+
+The read-support estimate in field 7 becomes \code{source_read_count}. Its
+fractional part is removed to give \code{consensus_count}, matching the
+upstream AIRR exporter. For example, a read-support estimate of 7.9 gives
+\code{consensus_count} 7. TRUST4 provides no separate UMI count, so
+\code{consensus_count} is used for chain ranking. Empty and \code{*} chain fields
+are skipped. With \code{column_profile = "full"}, original input columns such as \code{X.barcode} and
+the embedded chain fields remain under their original names, and the
+mapped columns are added. \strong{These input column names are kept unchanged.}
+\code{source_read_count} is also available with this profile. The contents of
+the chain fields are split into the mapped columns above.
+With \code{column_profile = "minimal"} or \code{"standard"}, the reader
+keeps the columns included in that profile. The available columns also
+depend on the input and \code{schema}.
 }
 \description{
-Reads TRUST4 cell tables, expands embedded chain records, and
-maps their receptor and count fields to AIRR-style columns.
+Reads TRUST4 cell tables and separates their chain records
+into rows with AIRR names for the gene, sequence, and count annotations.
 
-Each supplied primary or secondary chain becomes a row. \code{immundata} ranks
-chains when constructing receptors. The embedded \code{read_cnt} becomes
-\code{consensus_count}, following TRUST4's AIRR export.
+The \href{https://github.com/liulab-dfci/TRUST4#10x-genomics-data-and-barcode-based-single-cell-data}{TRUST4 barcode report format}
+describes the embedded comma-separated chain fields. This reader expects
+the tabular layout in the bundled example, with \code{X.barcode}, \code{chain1},
+\code{chain2}, \code{secondary_chain1}, and \code{secondary_chain2} columns.
+See the TRUST4 paper, \doi{10.1038/s41592-021-01142-2}.
+
+Each non-empty primary or secondary chain record becomes a row before
+'immundata' selects the chains used to construct receptors.
 }
 \examples{
 path <- system.file("extdata", "trust4", "1.1.7", "contigs.csv.gz",

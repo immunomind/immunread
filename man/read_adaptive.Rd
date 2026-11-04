@@ -15,31 +15,68 @@ read_adaptive(
 )
 }
 \arguments{
-\item{path}{Repertoire file paths, glob, or \code{"<manifest>"}.}
+\item{path}{One or more repertoire file paths or a file pattern such as
+\code{"data/*.tsv"}. Use \code{"<manifest>"} to read the paths from \code{manifest}.}
 
-\item{schema}{Receptor features or an \code{\link[immundata:make_receptor_schema]{immundata::make_receptor_schema()}}
-result.}
+\item{schema}{Column names that define receptor identity, such as
+\code{c("v_call", "junction_aa")}. Use \code{\link[immundata:make_receptor_schema]{immundata::make_receptor_schema()}} to
+also select one chain or a pair of chains from each cell.}
 
-\item{manifest}{Optional native immundata manifest.}
+\item{manifest}{An optional data frame with file paths and sample annotations.}
 
-\item{manifest_file_col}{Manifest column containing file paths when
+\item{manifest_file_col}{The name of the manifest column with file paths when
 \code{path = "<manifest>"}.}
 
-\item{column_profile}{Source columns to keep: \code{"minimal"}, \code{"standard"},
-or \code{"full"}.}
+\item{column_profile}{Which input annotations to keep. \code{"minimal"} keeps
+core identifiers, gene calls, junctions, and counts. \code{"standard"} also keeps
+sequence, region, and alignment annotations. \code{"full"} keeps all input
+annotations after the changes described under Value. Columns required by
+\code{schema} and \code{repertoire_schema} are kept with every profile.}
 
-\item{repertoire_schema}{Repertoire grouping passed to
-\code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+\item{repertoire_schema}{Columns that define repertoire groups. This is
+passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
 
-\item{...}{Other arguments passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+\item{...}{Additional arguments passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+}
+\value{
+An \link[immundata:ImmunData]{immundata::ImmunData} object containing the imported Adaptive
+Analyzer or Connector rearrangements. The reader copies source fields to
+the AIRR output column names below when those output columns are not already
+present. Existing AIRR output column names are kept. The full profile also
+includes source columns, except that \code{rearrangement_type} is renamed to
+\code{source_rearrangement_type}.
+
+In Analyzer v2 files identified by \code{sequenceStatus}, the reader copies
+\code{vMaxResolved}, \code{dMaxResolved}, and \code{jMaxResolved} to \code{v_call}, \code{d_call},
+and \code{j_call}. It copies \code{aminoAcid} to \code{junction_aa}, \code{nucleotide} to
+\code{sequence}, and \code{count (templates/reads)} to \code{duplicate_count}. The reader
+sets \code{productive} from \code{sequenceStatus == "In"}. When \code{frame_type} is
+present, it sets \code{productive} from \code{frame_type == "In"} instead.
+
+In Analyzer and Connector files without \code{sequenceStatus}, the reader copies
+\code{v_resolved}, \code{d_resolved}, and \code{j_resolved} to \code{v_call}, \code{d_call}, and
+\code{j_call}. It copies the first available column among
+\code{cdr3_rearrangement} and \code{cdr3_nucleotide} to \code{junction}, and copies
+\code{cdr3_amino_acid} to \code{junction_aa}. It copies the first available column
+among \code{rearrangement} and \code{nucleotide} to \code{sequence}, and copies
+\code{templates} to \code{duplicate_count}.
+
+\strong{Column names kept unchanged:} \code{productive} keeps its name, and rows
+that are not productive are filtered out. Source \code{seq_reads},
+\code{sequenceStatus}, and \code{frame_type} keep their names in the full profile,
+as do other source fields. The source \code{rearrangement_type} describes gene
+composition and is retained as
+\code{source_rearrangement_type} in the full profile. This is not AIRR's field
+for observed, simulated, or inferred origin. Adaptive abundance values are
+copy counts, not UMI counts, and the reader does not infer UMIs.
 }
 \description{
-Reads Adaptive immunoSEQ Analyzer or Connector tables and maps
-their resolved gene, CDR3, sequence, and abundance fields to AIRR-style columns.
+Reads Adaptive immunoSEQ Analyzer or Connector tables.
 
-Resolved gene calls are used directly. \code{templates} supplies bulk abundance
-for Analyzer and Connector; Analyzer v2 uses \code{count (templates/reads)}.
-\code{seq_reads} remains a distinct source count when present.
+Input columns are described in Adaptive's
+\href{https://www.adaptivebiotech.com/wp-content/uploads/2019/07/MRK-00342_immunoSEQ_TechNote_DataExport_WEB_REV.pdf}{Analyzer TSV export guide}
+and the legacy
+\href{https://clients.adaptivebiotech.com/assets/downloads/immunoSEQ_AnalyzerManual.pdf}{Analyzer manual, Sample Export section}.
 }
 \examples{
 path <- system.file("extdata", "adaptive", "analyzer", "contigs.tsv.gz",

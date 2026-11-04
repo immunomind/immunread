@@ -1,7 +1,7 @@
 cases <- list(
-  analyzer = list(junction = TRUE, sequence = FALSE),
+  analyzer = list(junction = TRUE, sequence = TRUE),
   analyzer_v2 = list(junction = FALSE, sequence = TRUE),
-  connector = list(junction = TRUE, sequence = FALSE)
+  connector = list(junction = TRUE, sequence = TRUE)
 )
 
 for (format in names(cases)) {
@@ -37,3 +37,22 @@ for (format in names(cases)) {
     }
   })
 }
+
+test_that("Adaptive gene composition is not exposed as AIRR sequence origin", {
+  path <- tempfile(fileext = ".tsv")
+  utils::write.table(data.frame(
+    v_resolved = "TRBV1*01", cdr3_amino_acid = "CASSF",
+    cdr3_nucleotide = "TGTGCTTCTTCTTTT", nucleotide = "AAATGTGCTTCTTCTTTTGGG",
+    templates = 12, frame_type = "In", rearrangement_type = "VDJ",
+    seq_reads = 87
+  ), path, sep = "\t", quote = FALSE, row.names = FALSE)
+  result <- read_adaptive(path, c("v_call", "junction_aa"),
+    column_profile = "full", output_folder = tempfile()) |> annotations()
+  expect_false("rearrangement_type" %in% names(result))
+  expect_equal(result$source_rearrangement_type, "VDJ")
+  expect_equal(result$sequence, "AAATGTGCTTCTTCTTTTGGG")
+  expect_equal(result$junction, "TGTGCTTCTTCTTTT")
+  expect_equal(result$duplicate_count, 12)
+  expect_equal(result$seq_reads, 87)
+  expect_false(any(c("umi_count", "consensus_count") %in% names(result)))
+})

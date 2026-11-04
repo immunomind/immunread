@@ -61,13 +61,19 @@ keep_productive <- function(data) {
   )(data)
 }
 
-profile_columns <- function(data, schema, column_profile, repertoire_schema) {
+profile_columns <- function(data, schema, column_profile, repertoire_schema,
+                            count_col = NULL) {
+  data <- normalize_airr_fields(data, count_col)
+  features <- if (is.character(schema)) schema else schema$features
+  complete <- lapply(intersect(features, names(data)), function(name) {
+    rlang::expr(!is.na(!!rlang::sym(name)))
+  })
+  data <- dplyr::filter(data, !!!complete)
   column_profile <- match.arg(column_profile, c("minimal", "standard", "full"))
   if (column_profile == "full" || is.function(repertoire_schema)) {
     return(data)
   }
 
-  features <- if (is.character(schema)) schema else schema$features
   protected <- c(
     features, "imd_filename", "productive", "cell_id", "locus",
     "duplicate_count", "umi_count", "consensus_count"
@@ -110,9 +116,84 @@ format_chain_aliases <- function(data, aliases, targets) {
     stop("Missing per-chain UMI/read count: ", aliases[["umi_count"]],
          call. = FALSE)
   }
-  if (!length(missing)) {
-    return(data)
+  # Give emitted count columns a common type before combining wide chain groups.
+  # Validate and convert them after absent chain rows have been removed.
+  counts <- intersect(c("umi_count", "consensus_count", "duplicate_count"), names(data))
+  if (length(counts)) {
+    casts <- lapply(counts, function(name) {
+      rlang::expr(dd$cast_to_type(!!rlang::sym(name), ""))
+    })
+    data <- dplyr::mutate(data, !!!stats::setNames(casts, counts))
   }
+  if (!length(missing)) return(data)
   values <- rep(list(NA_character_), length(missing))
   dplyr::mutate(data, !!!stats::setNames(values, missing))
+}
+
+# These two source-specific readers historically used duplicate_count for UMIs.
+# Generic AIRR and Immcantation copy counts must not be reinterpreted this way.
+format_umi_alias <- function(data) {
+  if ("umi_count" %in% names(data) || !"duplicate_count" %in% names(data)) {
+    return(data)
+  }
+  data <- format_aliases(data, c(source_duplicate_count = "duplicate_count"))
+  dplyr::rename(data, umi_count = duplicate_count)
+}
+
+# Normalize reserved fields only: manifest/source metadata keep their own values.
+normalize_airr_fields <- function(data, count_col = NULL) {
+  counts <- intersect(c("duplicate_count", "umi_count", "consensus_count"), names(data))
+  text <- intersect(c(
+    "sequence_id", "cell_id", "locus", "v_call", "d_call", "d2_call", "j_call", "c_call",
+    "sequence", "sequence_aa", "junction", "junction_aa",
+    paste0(rep(c("fwr1", "cdr1", "fwr2", "cdr2", "fwr3", "cdr3", "fwr4"), each = 2),
+           c("", "_aa"))
+  ), names(data))
+  normalize <- lapply(c(text, counts), function(name) {
+    value <- rlang::expr(dd$cast_to_type(!!rlang::sym(name), ""))
+    tokens <- c("", "NA", "None", "NaN", "nan", "<NA>", "*")
+    value <- rlang::expr(dplyr::if_else(!!value %in% !!tokens, NA_character_, !!value))
+    value
+  })
+  if (length(normalize)) {
+    data <- dplyr::mutate(data, !!!stats::setNames(normalize, c(text, counts)))
+  }
+  if (!length(counts)) return(data)
+
+  number_pattern <- "^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)([eE][+-]?[0-9]+)?$"
+  check_names <- paste0("invalid_", counts)
+  malformed <- lapply(counts, function(name) {
+    value <- rlang::sym(name)
+    rlang::expr(dd$bool_or(!is.na(!!value) & !grepl(!!number_pattern, !!value)))
+  })
+  malformed <- dplyr::collect(dplyr::summarise(
+    data, !!!stats::setNames(malformed, check_names)
+  ))
+  bad <- counts[vapply(malformed, isTRUE, logical(1))]
+  if (length(bad)) {
+    stop("Invalid numeric count in column(s): ", paste(bad, collapse = ", "), call. = FALSE)
+  }
+  casts <- lapply(counts, function(name) {
+    rlang::expr(dd$cast_to_type(!!rlang::sym(name), 0.0))
+  })
+  data <- dplyr::mutate(data, !!!stats::setNames(casts, counts))
+  invalid <- lapply(counts, function(name) {
+    value <- rlang::sym(name)
+    rlang::expr(dd$bool_or(!is.na(!!value) &
+      (!dd$isfinite(!!value) | !!value < 0 | !!value != dd$floor(!!value))))
+  })
+  checks <- stats::setNames(invalid, check_names)
+  if (!is.null(count_col) && count_col %in% counts) {
+    checks$missing_selected_count <- rlang::expr(dd$bool_or(is.na(!!rlang::sym(count_col))))
+  }
+  checked <- dplyr::collect(dplyr::summarise(data, !!!checks))
+  bad <- counts[vapply(checked[check_names], isTRUE, logical(1))]
+  if (length(bad)) {
+    stop("Counts must be finite, non-negative integers in column(s): ",
+         paste(bad, collapse = ", "), call. = FALSE)
+  }
+  if ("missing_selected_count" %in% names(checked) && isTRUE(checked$missing_selected_count)) {
+    stop("Missing values in selected abundance/ranking column: ", count_col, call. = FALSE)
+  }
+  data
 }

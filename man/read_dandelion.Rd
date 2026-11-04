@@ -15,30 +15,54 @@ read_dandelion(
 )
 }
 \arguments{
-\item{path}{Repertoire file paths, glob, or \code{"<manifest>"}.}
+\item{path}{One or more repertoire file paths or a file pattern such as
+\code{"data/*.tsv"}. Use \code{"<manifest>"} to read the paths from \code{manifest}.}
 
-\item{schema}{Receptor features or an \code{\link[immundata:make_receptor_schema]{immundata::make_receptor_schema()}}
-result.}
+\item{schema}{Column names that define receptor identity, such as
+\code{c("v_call", "junction_aa")}. Use \code{\link[immundata:make_receptor_schema]{immundata::make_receptor_schema()}} to
+also select one chain or a pair of chains from each cell.}
 
-\item{manifest}{Optional native immundata manifest.}
+\item{manifest}{An optional data frame with file paths and sample annotations.}
 
-\item{manifest_file_col}{Manifest column containing file paths when
+\item{manifest_file_col}{The name of the manifest column with file paths when
 \code{path = "<manifest>"}.}
 
-\item{column_profile}{Source columns to keep: \code{"minimal"}, \code{"standard"},
-or \code{"full"}.}
+\item{column_profile}{Which input annotations to keep. \code{"minimal"} keeps
+core identifiers, gene calls, junctions, and counts. \code{"standard"} also keeps
+sequence, region, and alignment annotations. \code{"full"} keeps all input
+annotations after the changes described under Value. Columns required by
+\code{schema} and \code{repertoire_schema} are kept with every profile.}
 
-\item{repertoire_schema}{Repertoire grouping passed to
-\code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+\item{repertoire_schema}{Columns that define repertoire groups. This is
+passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
 
-\item{...}{Other arguments passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+\item{...}{Additional arguments passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+}
+\value{
+An \link[immundata:ImmunData]{immundata::ImmunData} object containing the imported repertoires
+and available annotations. \strong{Column names kept unchanged:} Supplied AIRR
+names such as \code{cell_id}, \code{locus}, \code{v_call}, \code{d_call}, \code{j_call}, \code{junction},
+\code{junction_aa}, and \code{consensus_count} keep their names.
+When \code{umi_count} is absent and \code{duplicate_count} is present, the source
+\code{duplicate_count} column is renamed to \code{umi_count}. Its original value is
+also kept as \code{source_duplicate_count} in the \code{full} column profile. When
+\code{umi_count} is already present, \code{duplicate_count} keeps its name and its
+separate copy count. \code{umi_count} counts distinct UMIs and
+\code{consensus_count} counts reads supporting consensus sequences. Other
+available columns depend on the input and \code{column_profile}. Source and
+manifest annotations keep their names.
 }
 \description{
-Reads Dandelion AIRR-like contigs and maps their cell, locus,
-receptor, and abundance fields to AIRR-style columns.
+Reads Dandelion
+\href{https://sc-dandelion.readthedocs.io/en/latest/notebooks/base/0_dandelion_primer.html}{AIRR contig tables}
+(the \code{Dandelion.data} structure) and reads their cell, locus,
+receptor, and abundance fields into an \link[immundata:ImmunData]{immundata::ImmunData} object.
 
-Supplied secondary chains are retained; \code{immundata} ranks chains when
-constructing receptors.
+The reader passes available chains to \code{immundata}, which selects chains
+according to \code{schema} and count ranking. It ranks chains by \code{umi_count} when
+present. If that field is absent, it uses \code{duplicate_count}. If both fields
+are absent, it uses \code{consensus_count}. Counts used for ranking must be
+finite whole numbers that are zero or greater, with no missing values.
 }
 \examples{
 path <- system.file("extdata", "dandelion", "0.5.5", "contigs.csv.gz",

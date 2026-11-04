@@ -16,35 +16,64 @@ read_immcantation(
 )
 }
 \arguments{
-\item{path}{Repertoire file paths, glob, or \code{"<manifest>"}.}
+\item{path}{One or more repertoire file paths or a file pattern such as
+\code{"data/*.tsv"}. Use \code{"<manifest>"} to read the paths from \code{manifest}.}
 
-\item{schema}{Receptor features or an \code{\link[immundata:make_receptor_schema]{immundata::make_receptor_schema()}}
-result.}
+\item{schema}{Column names that define receptor identity, such as
+\code{c("v_call", "junction_aa")}. Use \code{\link[immundata:make_receptor_schema]{immundata::make_receptor_schema()}} to
+also select one chain or a pair of chains from each cell.}
 
-\item{manifest}{Optional native immundata manifest.}
+\item{manifest}{An optional data frame with file paths and sample annotations.}
 
-\item{manifest_file_col}{Manifest column containing file paths when
+\item{manifest_file_col}{The name of the manifest column with file paths when
 \code{path = "<manifest>"}.}
 
-\item{column_profile}{Source columns to keep: \code{"minimal"}, \code{"standard"},
-or \code{"full"}.}
+\item{column_profile}{Which input annotations to keep. \code{"minimal"} keeps
+core identifiers, gene calls, junctions, and counts. \code{"standard"} also keeps
+sequence, region, and alignment annotations. \code{"full"} keeps all input
+annotations after the changes described under Value. Columns required by
+\code{schema} and \code{repertoire_schema} are kept with every profile.}
 
-\item{repertoire_schema}{Repertoire grouping passed to
-\code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+\item{repertoire_schema}{Columns that define repertoire groups. This is
+passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
 
 \item{mode}{\code{"sc"} for single-cell tables or \code{"bulk"} for bulk tables.}
 
-\item{...}{Other arguments passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+\item{...}{Additional arguments passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}}.}
+}
+\value{
+An \link[immundata:ImmunData]{immundata::ImmunData} object containing the imported repertoires
+and available annotations. \strong{Column names kept unchanged:} The reader
+does not convert input column names. AIRR fields kept by the selected
+\code{column_profile} keep their supplied names, including \code{cell_id}, \code{locus},
+\code{v_call}, \code{d_call}, \code{j_call}, \code{junction}, \code{junction_aa},
+\code{duplicate_count}, \code{umi_count}, and \code{consensus_count}. These count columns
+remain separate. \code{umi_count} counts distinct UMIs, \code{duplicate_count}
+counts copies, and \code{consensus_count} counts reads supporting consensus
+sequences. The reader does not treat \code{duplicate_count} as a UMI count.
+Other available columns depend on the input and \code{column_profile}. Missing
+source fields remain absent. Source and manifest annotations keep their
+names.
 }
 \description{
-Reads Immcantation AIRR-like tables in bulk or single-cell mode
-and maps their receptor and abundance fields to AIRR-style columns.
+Reads Immcantation tables using the
+\href{https://changeo.readthedocs.io/en/stable/standard.html#airr-c-format}{AIRR-C format}
+in bulk or single-cell mode and reads their annotations into an
+\link[immundata:ImmunData]{immundata::ImmunData} object.
 
-Supplied secondary chains are retained in single-cell mode; \code{immundata}
-ranks chains when constructing receptors.
+In single-cell mode, the reader passes available chains to \code{immundata},
+which selects chains according to \code{schema} and count ranking. In bulk mode,
+abundance uses \code{duplicate_count} when that field is present. If it is
+absent, abundance uses \code{umi_count}. In single-cell mode, chains are ranked
+by \code{umi_count} when present. If it is absent, ranking uses
+\code{duplicate_count}. If both fields are absent, ranking uses
+\code{consensus_count}. Counts used for abundance or ranking must be finite whole
+numbers that are zero or greater, with no missing values. Unavailable
+source annotations remain missing and are not reconstructed from other
+regions.
 }
 \examples{
-path <- system.file("extdata", "immcantation", "4.6.0", "contigs.csv.gz",
+path <- system.file("extdata", "immcantation", "single-cell.tsv.gz",
   package = "immunread", mustWork = TRUE)
 idata <- read_immcantation(path, schema = c("v_call", "junction_aa"),
   mode = "sc", output_folder = tempfile("immunread-"))
