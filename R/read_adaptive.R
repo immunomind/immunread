@@ -42,9 +42,12 @@
 #' duckplyr::db_exec("SET threads TO 1")
 #'
 #' path <- system.file("extdata", "adaptive", "analyzer", "contigs.tsv.gz",
-#'   package = "immunread", mustWork = TRUE)
-#' idata <- read_adaptive(path, schema = c("v_call", "junction_aa"),
-#'   output_folder = tempfile("immunread-"))
+#'   package = "immunread", mustWork = TRUE
+#' )
+#' idata <- read_adaptive(path,
+#'   schema = c("v_call", "junction_aa"),
+#'   output_folder = tempfile("immunread-")
+#' )
 #' @export
 read_adaptive <- function(path, schema, manifest = NULL,
                           manifest_file_col = "file", column_profile = "standard",
@@ -75,7 +78,8 @@ read_adaptive <- function(path, schema, manifest = NULL,
     }
     profile_columns(
       keep_productive(data), schema, column_profile,
-      repertoire_schema, count_col = "duplicate_count"
+      repertoire_schema,
+      count_col = "duplicate_count"
     )
   }
   immundata::read_repertoires(

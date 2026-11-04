@@ -69,7 +69,10 @@ finite whole numbers that are zero or greater, with no missing values.
 duckplyr::db_exec("SET threads TO 1")
 
 path <- system.file("extdata", "bd", "2.3", "contigs.csv.gz",
-  package = "immunread", mustWork = TRUE)
-idata <- read_bd(path, schema = c("v_call", "junction_aa"),
-  output_folder = tempfile("immunread-"))
+  package = "immunread", mustWork = TRUE
+)
+idata <- read_bd(path,
+  schema = c("v_call", "junction_aa"),
+  output_folder = tempfile("immunread-")
+)
 }

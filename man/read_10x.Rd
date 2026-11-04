@@ -78,7 +78,10 @@ barcode, locus, gene, sequence, and count fields to AIRR-style columns.
 duckplyr::db_exec("SET threads TO 1")
 
 path <- system.file("extdata", "10x", "9.0.1", "contigs.csv.gz",
-  package = "immunread", mustWork = TRUE)
-idata <- read_10x(path, schema = c("v_call", "junction_aa"),
-  output_folder = tempfile("immunread-"))
+  package = "immunread", mustWork = TRUE
+)
+idata <- read_10x(path,
+  schema = c("v_call", "junction_aa"),
+  output_folder = tempfile("immunread-")
+)
 }

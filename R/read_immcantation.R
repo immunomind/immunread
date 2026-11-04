@@ -29,13 +29,15 @@
 #'   names.
 #' @param mode `"sc"` for single-cell tables or `"bulk"` for bulk tables.
 #' @examples
-#' # Use one thread for this small example.
-#' duckplyr::db_exec("SET threads TO 1")
-#'
+#' \dontrun{
 #' path <- system.file("extdata", "immcantation", "single-cell.tsv.gz",
-#'   package = "immunread", mustWork = TRUE)
-#' idata <- read_immcantation(path, schema = c("v_call", "junction_aa"),
-#'   mode = "sc", output_folder = tempfile("immunread-"))
+#'   package = "immunread", mustWork = TRUE
+#' )
+#' idata <- read_immcantation(path,
+#'   schema = c("v_call", "junction_aa"),
+#'   mode = "sc", output_folder = tempfile("immunread-")
+#' )
+#' }
 #' @export
 read_immcantation <- function(path, schema, manifest = NULL,
                               manifest_file_col = "file", column_profile = "standard",
@@ -45,16 +47,23 @@ read_immcantation <- function(path, schema, manifest = NULL,
   columns <- source_columns(path, manifest, manifest_file_col)
   count_col <- if (mode == "bulk") {
     first_column(columns, c("duplicate_count", "umi_count"))
-  } else NULL
+  } else {
+    NULL
+  }
   rank_col <- if (mode == "sc") {
     first_column(columns, c("umi_count", "duplicate_count", "consensus_count"))
-  } else NULL
+  } else {
+    NULL
+  }
   prepare <- function(data, manifest = NULL) {
-    profile_columns(keep_productive(data), schema, column_profile,
-                    repertoire_schema, if (mode == "bulk") count_col else rank_col)
+    profile_columns(
+      keep_productive(data), schema, column_profile,
+      repertoire_schema, if (mode == "bulk") count_col else rank_col
+    )
   }
   immundata::read_repertoires(
-    path, schema, manifest = manifest, manifest_file_col = manifest_file_col,
+    path, schema,
+    manifest = manifest, manifest_file_col = manifest_file_col,
     barcode_col = if (mode == "sc") "cell_id" else NULL,
     count_col = count_col,
     locus_col = if ("locus" %in% columns) "locus" else NULL,

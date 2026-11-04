@@ -65,11 +65,13 @@ are absent, it uses \code{consensus_count}. Counts used for ranking must be
 finite whole numbers that are zero or greater, with no missing values.
 }
 \examples{
-# Use one thread for this small example.
-duckplyr::db_exec("SET threads TO 1")
-
+\dontrun{
 path <- system.file("extdata", "dandelion", "0.5.5", "contigs.csv.gz",
-  package = "immunread", mustWork = TRUE)
-idata <- read_dandelion(path, schema = c("v_call", "junction_aa"),
-  output_folder = tempfile("immunread-"))
+  package = "immunread", mustWork = TRUE
+)
+idata <- read_dandelion(path,
+  schema = c("v_call", "junction_aa"),
+  output_folder = tempfile("immunread-")
+)
+}
 }

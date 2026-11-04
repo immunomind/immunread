@@ -39,9 +39,12 @@
 #' duckplyr::db_exec("SET threads TO 1")
 #'
 #' path <- system.file("extdata", "trust4", "1.1.7", "contigs.csv.gz",
-#'   package = "immunread", mustWork = TRUE)
-#' idata <- read_trust4(path, schema = c("v_call", "junction_aa"),
-#'   output_folder = tempfile("immunread-"))
+#'   package = "immunread", mustWork = TRUE
+#' )
+#' idata <- read_trust4(path,
+#'   schema = c("v_call", "junction_aa"),
+#'   output_folder = tempfile("immunread-")
+#' )
 #' @export
 read_trust4 <- function(path, schema, manifest = NULL,
                         manifest_file_col = "file", column_profile = "standard",
@@ -95,7 +98,8 @@ read_trust4 <- function(path, schema, manifest = NULL,
   prepare <- function(data, manifest = NULL) {
     profile_columns(
       keep_productive(normalize(data)), schema, column_profile,
-      repertoire_schema, count_col = "consensus_count"
+      repertoire_schema,
+      count_col = "consensus_count"
     )
   }
   immundata::read_repertoires(

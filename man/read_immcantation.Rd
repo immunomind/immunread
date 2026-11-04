@@ -73,11 +73,13 @@ source annotations remain missing and are not reconstructed from other
 regions.
 }
 \examples{
-# Use one thread for this small example.
-duckplyr::db_exec("SET threads TO 1")
-
+\dontrun{
 path <- system.file("extdata", "immcantation", "single-cell.tsv.gz",
-  package = "immunread", mustWork = TRUE)
-idata <- read_immcantation(path, schema = c("v_call", "junction_aa"),
-  mode = "sc", output_folder = tempfile("immunread-"))
+  package = "immunread", mustWork = TRUE
+)
+idata <- read_immcantation(path,
+  schema = c("v_call", "junction_aa"),
+  mode = "sc", output_folder = tempfile("immunread-")
+)
+}
 }

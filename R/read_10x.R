@@ -37,9 +37,12 @@
 #' duckplyr::db_exec("SET threads TO 1")
 #'
 #' path <- system.file("extdata", "10x", "9.0.1", "contigs.csv.gz",
-#'   package = "immunread", mustWork = TRUE)
-#' idata <- read_10x(path, schema = c("v_call", "junction_aa"),
-#'   output_folder = tempfile("immunread-"))
+#'   package = "immunread", mustWork = TRUE
+#' )
+#' idata <- read_10x(path,
+#'   schema = c("v_call", "junction_aa"),
+#'   output_folder = tempfile("immunread-")
+#' )
 #' @export
 read_10x <- function(path, schema, manifest = NULL,
                      manifest_file_col = "file", column_profile = "standard",
@@ -69,7 +72,8 @@ read_10x <- function(path, schema, manifest = NULL,
     }
     profile_columns(
       keep_productive(data), schema, column_profile,
-      repertoire_schema, count_col = "umi_count"
+      repertoire_schema,
+      count_col = "umi_count"
     )
   }
   immundata::read_repertoires(

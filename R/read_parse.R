@@ -43,9 +43,12 @@
 #' duckplyr::db_exec("SET threads TO 1")
 #'
 #' path <- system.file("extdata", "parsebio", "1.6.1", "contigs.csv.gz",
-#'   package = "immunread", mustWork = TRUE)
-#' idata <- read_parsebio(path, schema = c("v_call", "junction_aa"),
-#'   output_folder = tempfile("immunread-"))
+#'   package = "immunread", mustWork = TRUE
+#' )
+#' idata <- read_parsebio(path,
+#'   schema = c("v_call", "junction_aa"),
+#'   output_folder = tempfile("immunread-")
+#' )
 #' @export
 read_parsebio <- function(path, schema, manifest = NULL,
                           manifest_file_col = "file", column_profile = "standard",
@@ -82,7 +85,8 @@ read_parsebio <- function(path, schema, manifest = NULL,
   prepare <- function(data, manifest = NULL) {
     profile_columns(
       keep_productive(normalize(data)), schema, column_profile,
-      repertoire_schema, count_col = "umi_count"
+      repertoire_schema,
+      count_col = "umi_count"
     )
   }
   immundata::read_repertoires(

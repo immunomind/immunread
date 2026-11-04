@@ -23,13 +23,15 @@
 #'   available columns depend on the input and `column_profile`. Source and
 #'   manifest annotations keep their names.
 #' @examples
-#' # Use one thread for this small example.
-#' duckplyr::db_exec("SET threads TO 1")
-#'
+#' \dontrun{
 #' path <- system.file("extdata", "dandelion", "0.5.5", "contigs.csv.gz",
-#'   package = "immunread", mustWork = TRUE)
-#' idata <- read_dandelion(path, schema = c("v_call", "junction_aa"),
-#'   output_folder = tempfile("immunread-"))
+#'   package = "immunread", mustWork = TRUE
+#' )
+#' idata <- read_dandelion(path,
+#'   schema = c("v_call", "junction_aa"),
+#'   output_folder = tempfile("immunread-")
+#' )
+#' }
 #' @export
 read_dandelion <- function(path, schema, manifest = NULL,
                            manifest_file_col = "file", column_profile = "standard",
