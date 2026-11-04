@@ -2,16 +2,21 @@
 
 # Read an AIRR Rearrangement table as single-cell repertoire data
 
-[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_airr.R#L65)
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_airr.R#L127)
 
 ## Description
 
-Reads a single-cell AIRR Rearrangement table, maps <code>barcode</code>
-to <code>cell_id</code> when needed, and selects chains using their
-count field.
+Reads a single-cell
+<a href="https://docs.airr-community.org/en/stable/datarep/rearrangements.html">AIRR
+Rearrangement table</a> and uses its cell identifiers and counts to
+select receptor chains.
 
-Uses <code>barcode</code> as <code>cell_id</code> when
-<code>cell_id</code> is absent.
+To select chains, the function uses <code>umi_count</code> when it is
+present. If that column is absent, it uses <code>duplicate_count</code>.
+If both are absent, it uses <code>consensus_count</code>. Missing values
+in the selected field cause an error even when another count field has
+values. The count and missing-value rules described in
+<code>read_airr_bulk()</code> also apply here.
 
 ## Usage
 
@@ -34,7 +39,9 @@ Uses <code>barcode</code> as <code>cell_id</code> when
 <code id="path">path</code>
 </td>
 <td>
-Repertoire file paths, glob, or <code>“\<manifest\>”</code>.
+One or more repertoire file paths or a file pattern such as
+<code>“data/\*.tsv”</code>. Use <code>“\<manifest\>”</code> to read the
+paths from <code>manifest</code>.
 </td>
 </tr>
 <tr>
@@ -42,8 +49,10 @@ Repertoire file paths, glob, or <code>“\<manifest\>”</code>.
 <code id="schema">schema</code>
 </td>
 <td>
-Receptor features or an <code>immundata::make_receptor_schema()</code>
-result.
+Column names that define receptor identity, such as <code>c(“v_call”,
+“junction_aa”)</code>. Use
+<code>immundata::make_receptor_schema()</code> to also select one chain
+or a pair of chains from each cell.
 </td>
 </tr>
 <tr>
@@ -51,7 +60,7 @@ result.
 <code id="manifest">manifest</code>
 </td>
 <td>
-Optional native immundata manifest.
+An optional data frame with file paths and sample annotations.
 </td>
 </tr>
 <tr>
@@ -59,7 +68,7 @@ Optional native immundata manifest.
 <code id="manifest_file_col">manifest_file_col</code>
 </td>
 <td>
-Manifest column containing file paths when <code>path =
+The name of the manifest column with file paths when <code>path =
 “\<manifest\>”</code>.
 </td>
 </tr>
@@ -68,8 +77,12 @@ Manifest column containing file paths when <code>path =
 <code id="column_profile">column_profile</code>
 </td>
 <td>
-Source columns to keep: <code>“minimal”</code>, <code>“standard”</code>,
-or <code>“full”</code>.
+Which input annotations to keep. <code>“minimal”</code> keeps core
+identifiers, gene calls, junctions, and counts. <code>“standard”</code>
+also keeps sequence, region, and alignment annotations.
+<code>“full”</code> keeps all input annotations after the changes
+described under Value. Columns required by <code>schema</code> and
+<code>repertoire_schema</code> are kept with every profile.
 </td>
 </tr>
 <tr>
@@ -77,7 +90,7 @@ or <code>“full”</code>.
 <code id="repertoire_schema">repertoire_schema</code>
 </td>
 <td>
-Repertoire grouping passed to
+Columns that define repertoire groups. This is passed to
 <code>immundata::read_repertoires()</code>.
 </td>
 </tr>
@@ -86,19 +99,43 @@ Repertoire grouping passed to
 <code id="...">…</code>
 </td>
 <td>
-Other arguments passed to <code>immundata::read_repertoires()</code>.
+Additional arguments passed to
+<code>immundata::read_repertoires()</code>.
 </td>
 </tr>
 </table>
 
 ## Value
 
-An <code>ImmunData</code> object.
+An immundata::ImmunData object containing the imported single-cell
+repertoire data. If <code>cell_id</code> is absent, values from
+<code>barcode</code> are copied into a new <code>cell_id</code> column.
+If <code>cell_id</code> is already present, it is used without changing
+its name. When a source <code>barcode</code> column is supplied, it is
+also available with <code>column_profile = “full”</code>.
+
+<strong>Other AIRR column names are kept unchanged.</strong> This
+includes gene calls, <code>locus</code>, <code>junction</code>,
+<code>junction_aa</code>, <code>duplicate_count</code>,
+<code>umi_count</code>, and <code>consensus_count</code> when present.
+The function does not rename a count field when it uses that field to
+select chains. These count names describe sequence copies, distinct
+UMIs, and reads used to build a consensus or contig in AIRR terminology.
+The reader also keeps <code>cdr3</code> and <code>cdr3_aa</code>
+separate from the junction fields.
+
+The available annotations depend on the input and
+<code>column_profile</code>. ‘immundata’ adds its own analysis columns,
+and <code>manifest</code> can add sample annotations under their
+original column names.
 
 ## Examples
 
 ``` r
 library("immunread")
+
+# Use one thread for this small example.
+duckplyr::db_exec("SET threads TO 1")
 
 path <- system.file("extdata", "airr", "2.0-sc", "contigs.tsv.gz",
   package = "immunread", mustWork = TRUE)

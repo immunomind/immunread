@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
     
     
       
@@ -29,10 +29,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
       
       
 
@@ -575,6 +575,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Value
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#examples" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -801,6 +812,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#value" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Value
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#examples" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -832,12 +854,19 @@
 
 
 <h1 id="read-dandelion-airr-like-contigs">Read Dandelion AIRR-like contigs</h1>
-<p><a href="https://github.com/immunomind/immunread/tree/main/R/read_dandelion.R#L14"><strong>Source code</strong></a></p>
+<p><a href="https://github.com/immunomind/immunread/tree/main/R/read_dandelion.R#L34"><strong>Source code</strong></a></p>
 <h2 id="description">Description</h2>
-<p>Reads Dandelion AIRR-like contigs and maps their cell, locus, receptor,
-and abundance fields to AIRR-style columns.</p>
-<p>Supplied secondary chains are retained; <code>immundata</code> ranks
-chains when constructing receptors.</p>
+<p>Reads Dandelion
+<a href="https://sc-dandelion.readthedocs.io/en/latest/notebooks/base/0_dandelion_primer.html">AIRR
+contig tables</a> (the <code>Dandelion.data</code> structure) and reads
+their cell, locus, receptor, and abundance fields into an
+immundata::ImmunData object.</p>
+<p>The reader passes available chains to <code>immundata</code>, which
+selects chains according to <code>schema</code> and count ranking. It
+ranks chains by <code>umi_count</code> when present. If that field is
+absent, it uses <code>duplicate_count</code>. If both fields are absent,
+it uses <code>consensus_count</code>. Counts used for ranking must be
+finite whole numbers that are zero or greater, with no missing values.</p>
 <h2 id="usage">Usage</h2>
 <pre><code class='language-R'>read_dandelion(
   path,
@@ -857,7 +886,9 @@ chains when constructing receptors.</p>
 <code id="path">path</code>
 </td>
 <td>
-Repertoire file paths, glob, or <code>“\<manifest\>”</code>.
+One or more repertoire file paths or a file pattern such as
+<code>“data/\*.tsv”</code>. Use <code>“\<manifest\>”</code> to read the
+paths from <code>manifest</code>.
 </td>
 </tr>
 <tr>
@@ -865,8 +896,10 @@ Repertoire file paths, glob, or <code>“\<manifest\>”</code>.
 <code id="schema">schema</code>
 </td>
 <td>
-Receptor features or an <code>immundata::make_receptor_schema()</code>
-result.
+Column names that define receptor identity, such as <code>c(“v_call”,
+“junction_aa”)</code>. Use
+<code>immundata::make_receptor_schema()</code> to also select one chain
+or a pair of chains from each cell.
 </td>
 </tr>
 <tr>
@@ -874,7 +907,7 @@ result.
 <code id="manifest">manifest</code>
 </td>
 <td>
-Optional native immundata manifest.
+An optional data frame with file paths and sample annotations.
 </td>
 </tr>
 <tr>
@@ -882,7 +915,7 @@ Optional native immundata manifest.
 <code id="manifest_file_col">manifest_file_col</code>
 </td>
 <td>
-Manifest column containing file paths when <code>path =
+The name of the manifest column with file paths when <code>path =
 “\<manifest\>”</code>.
 </td>
 </tr>
@@ -891,8 +924,12 @@ Manifest column containing file paths when <code>path =
 <code id="column_profile">column_profile</code>
 </td>
 <td>
-Source columns to keep: <code>“minimal”</code>, <code>“standard”</code>,
-or <code>“full”</code>.
+Which input annotations to keep. <code>“minimal”</code> keeps core
+identifiers, gene calls, junctions, and counts. <code>“standard”</code>
+also keeps sequence, region, and alignment annotations.
+<code>“full”</code> keeps all input annotations after the changes
+described under Value. Columns required by <code>schema</code> and
+<code>repertoire_schema</code> are kept with every profile.
 </td>
 </tr>
 <tr>
@@ -900,7 +937,7 @@ or <code>“full”</code>.
 <code id="repertoire_schema">repertoire_schema</code>
 </td>
 <td>
-Repertoire grouping passed to
+Columns that define repertoire groups. This is passed to
 <code>immundata::read_repertoires()</code>.
 </td>
 </tr>
@@ -909,13 +946,35 @@ Repertoire grouping passed to
 <code id="...">…</code>
 </td>
 <td>
-Other arguments passed to <code>immundata::read_repertoires()</code>.
+Additional arguments passed to
+<code>immundata::read_repertoires()</code>.
 </td>
 </tr>
 </table>
 
+<h2 id="value">Value</h2>
+<p>An immundata::ImmunData object containing the imported repertoires and
+available annotations. <strong>Column names kept unchanged:</strong>
+Supplied AIRR names such as <code>cell_id</code>, <code>locus</code>,
+<code>v_call</code>, <code>d_call</code>, <code>j_call</code>,
+<code>junction</code>, <code>junction_aa</code>, and
+<code>consensus_count</code> keep their names. When
+<code>umi_count</code> is absent and <code>duplicate_count</code> is
+present, the source <code>duplicate_count</code> column is renamed to
+<code>umi_count</code>. Its original value is also kept as
+<code>source_duplicate_count</code> in the <code>full</code> column
+profile. When <code>umi_count</code> is already present,
+<code>duplicate_count</code> keeps its name and its separate copy count.
+<code>umi_count</code> counts distinct UMIs and
+<code>consensus_count</code> counts reads supporting consensus
+sequences. Other available columns depend on the input and
+<code>column_profile</code>. Source and manifest annotations keep their
+names.</p>
 <h2 id="examples">Examples</h2>
 <pre><code class="language-r">library(&quot;immunread&quot;)
+
+# Use one thread for this small example.
+duckplyr::db_exec(&quot;SET threads TO 1&quot;)
 
 path &lt;- system.file(&quot;extdata&quot;, &quot;dandelion&quot;, &quot;0.5.5&quot;, &quot;contigs.csv.gz&quot;,
   package = &quot;immunread&quot;, mustWork = TRUE)
@@ -977,10 +1036,10 @@ idata &lt;- read_dandelion(path, schema = c(&quot;v_call&quot;, &quot;junction_a
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "content.code.copy"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      <script src="../assets/javascripts/bundle.c21346df.min.js"></script>
       
     
   </body>

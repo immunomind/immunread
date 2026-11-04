@@ -2,16 +2,15 @@
 
 # Read 10x Genomics V(D)J contigs
 
-[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_10x.R#L14)
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_10x.R#L44)
 
 ## Description
 
-Reads 10x Genomics V(D)J contig annotations and maps their barcode,
+Reads 10x Genomics V(D)J
+<a href="https://www.10xgenomics.com/support/software/cell-ranger/latest/analysis/outputs/cr-5p-outputs-annotations-vdj">contig
+annotation CSV files</a> such as
+<code>filtered_contig_annotations.csv</code> and maps their barcode,
 locus, gene, sequence, and count fields to AIRR-style columns.
-
-Supplied secondary chains are retained; <code>immundata</code> ranks
-chains when constructing receptors. <code>umis</code> and
-<code>reads</code> remain distinct counts.
 
 ## Usage
 
@@ -34,7 +33,9 @@ chains when constructing receptors. <code>umis</code> and
 <code id="path">path</code>
 </td>
 <td>
-Repertoire file paths, glob, or <code>“\<manifest\>”</code>.
+One or more repertoire file paths or a file pattern such as
+<code>“data/\*.tsv”</code>. Use <code>“\<manifest\>”</code> to read the
+paths from <code>manifest</code>.
 </td>
 </tr>
 <tr>
@@ -42,8 +43,10 @@ Repertoire file paths, glob, or <code>“\<manifest\>”</code>.
 <code id="schema">schema</code>
 </td>
 <td>
-Receptor features or an <code>immundata::make_receptor_schema()</code>
-result.
+Column names that define receptor identity, such as <code>c(“v_call”,
+“junction_aa”)</code>. Use
+<code>immundata::make_receptor_schema()</code> to also select one chain
+or a pair of chains from each cell.
 </td>
 </tr>
 <tr>
@@ -51,7 +54,7 @@ result.
 <code id="manifest">manifest</code>
 </td>
 <td>
-Optional native immundata manifest.
+An optional data frame with file paths and sample annotations.
 </td>
 </tr>
 <tr>
@@ -59,7 +62,7 @@ Optional native immundata manifest.
 <code id="manifest_file_col">manifest_file_col</code>
 </td>
 <td>
-Manifest column containing file paths when <code>path =
+The name of the manifest column with file paths when <code>path =
 “\<manifest\>”</code>.
 </td>
 </tr>
@@ -68,8 +71,12 @@ Manifest column containing file paths when <code>path =
 <code id="column_profile">column_profile</code>
 </td>
 <td>
-Source columns to keep: <code>“minimal”</code>, <code>“standard”</code>,
-or <code>“full”</code>.
+Which input annotations to keep. <code>“minimal”</code> keeps core
+identifiers, gene calls, junctions, and counts. <code>“standard”</code>
+also keeps sequence, region, and alignment annotations.
+<code>“full”</code> keeps all input annotations after the changes
+described under Value. Columns required by <code>schema</code> and
+<code>repertoire_schema</code> are kept with every profile.
 </td>
 </tr>
 <tr>
@@ -77,7 +84,7 @@ or <code>“full”</code>.
 <code id="repertoire_schema">repertoire_schema</code>
 </td>
 <td>
-Repertoire grouping passed to
+Columns that define repertoire groups. This is passed to
 <code>immundata::read_repertoires()</code>.
 </td>
 </tr>
@@ -86,15 +93,58 @@ Repertoire grouping passed to
 <code id="...">…</code>
 </td>
 <td>
-Other arguments passed to <code>immundata::read_repertoires()</code>.
+Additional arguments passed to
+<code>immundata::read_repertoires()</code>.
 </td>
 </tr>
 </table>
+
+## Value
+
+An immundata::ImmunData object containing the imported 10x contigs.
+Source columns are copied to the AIRR output column names below when
+those output columns are not already present. Existing AIRR output
+column names are kept. The full profile also includes source columns,
+except where the region and CDR3 fields are renamed or removed as
+described below.
+
+The reader maps <code>barcode</code> to <code>cell_id</code>,
+<code>contig_id</code> to <code>sequence_id</code>, and
+<code>chain</code> to <code>locus</code>. It maps <code>v_gene</code>,
+<code>d_gene</code>, <code>j_gene</code>, and <code>c_gene</code> to
+<code>v_call</code>, <code>d_call</code>, <code>j_call</code>, and
+<code>c_call</code>. It maps <code>cdr3_nt</code> to
+<code>junction</code>, <code>cdr3</code> to <code>junction_aa</code>,
+<code>umis</code> to <code>umi_count</code>, and <code>reads</code> to
+<code>consensus_count</code>.
+
+For each of <code>fwr1</code>, <code>cdr1</code>, <code>fwr2</code>,
+<code>cdr2</code>, <code>fwr3</code>, and <code>fwr4</code>, the source
+name without <code style="white-space: pre;">\_aa</code> or
+<code style="white-space: pre;">\_nt</code> contains amino acids. For
+example, when both source fields are present, <code>fwr1</code> is
+copied to <code>fwr1_aa</code> and <code>fwr1_nt</code> is copied to the
+AIRR output column <code>fwr1</code>. This same pattern applies to all
+six regions. Source values replace any existing region output fields. If
+the source name without a suffix is present without a matching
+<code style="white-space: pre;">\_nt</code> field, that name is removed
+after the amino-acid copy is made. The CDR3 source columns are renamed
+<code>source_cdr3</code> and <code>source_cdr3_nt</code> when present.
+<strong>Column names kept unchanged:</strong> <code>productive</code>
+keeps its source name. The reader uses this field to remove unproductive
+contigs when it is supplied. <code>umi_count</code> records distinct
+UMIs, and <code>consensus_count</code> records supporting reads. Other
+source columns keep their names in the full profile. The selected chains
+in the returned object depend on the schema and count settings passed to
+<code>immundata</code>.
 
 ## Examples
 
 ``` r
 library("immunread")
+
+# Use one thread for this small example.
+duckplyr::db_exec("SET threads TO 1")
 
 path <- system.file("extdata", "10x", "9.0.1", "contigs.csv.gz",
   package = "immunread", mustWork = TRUE)

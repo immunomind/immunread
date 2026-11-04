@@ -2,15 +2,22 @@
 
 # Read Dandelion AIRR-like contigs
 
-[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_dandelion.R#L14)
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_dandelion.R#L34)
 
 ## Description
 
-Reads Dandelion AIRR-like contigs and maps their cell, locus, receptor,
-and abundance fields to AIRR-style columns.
+Reads Dandelion
+<a href="https://sc-dandelion.readthedocs.io/en/latest/notebooks/base/0_dandelion_primer.html">AIRR
+contig tables</a> (the <code>Dandelion.data</code> structure) and reads
+their cell, locus, receptor, and abundance fields into an
+immundata::ImmunData object.
 
-Supplied secondary chains are retained; <code>immundata</code> ranks
-chains when constructing receptors.
+The reader passes available chains to <code>immundata</code>, which
+selects chains according to <code>schema</code> and count ranking. It
+ranks chains by <code>umi_count</code> when present. If that field is
+absent, it uses <code>duplicate_count</code>. If both fields are absent,
+it uses <code>consensus_count</code>. Counts used for ranking must be
+finite whole numbers that are zero or greater, with no missing values.
 
 ## Usage
 
@@ -33,7 +40,9 @@ chains when constructing receptors.
 <code id="path">path</code>
 </td>
 <td>
-Repertoire file paths, glob, or <code>“\<manifest\>”</code>.
+One or more repertoire file paths or a file pattern such as
+<code>“data/\*.tsv”</code>. Use <code>“\<manifest\>”</code> to read the
+paths from <code>manifest</code>.
 </td>
 </tr>
 <tr>
@@ -41,8 +50,10 @@ Repertoire file paths, glob, or <code>“\<manifest\>”</code>.
 <code id="schema">schema</code>
 </td>
 <td>
-Receptor features or an <code>immundata::make_receptor_schema()</code>
-result.
+Column names that define receptor identity, such as <code>c(“v_call”,
+“junction_aa”)</code>. Use
+<code>immundata::make_receptor_schema()</code> to also select one chain
+or a pair of chains from each cell.
 </td>
 </tr>
 <tr>
@@ -50,7 +61,7 @@ result.
 <code id="manifest">manifest</code>
 </td>
 <td>
-Optional native immundata manifest.
+An optional data frame with file paths and sample annotations.
 </td>
 </tr>
 <tr>
@@ -58,7 +69,7 @@ Optional native immundata manifest.
 <code id="manifest_file_col">manifest_file_col</code>
 </td>
 <td>
-Manifest column containing file paths when <code>path =
+The name of the manifest column with file paths when <code>path =
 “\<manifest\>”</code>.
 </td>
 </tr>
@@ -67,8 +78,12 @@ Manifest column containing file paths when <code>path =
 <code id="column_profile">column_profile</code>
 </td>
 <td>
-Source columns to keep: <code>“minimal”</code>, <code>“standard”</code>,
-or <code>“full”</code>.
+Which input annotations to keep. <code>“minimal”</code> keeps core
+identifiers, gene calls, junctions, and counts. <code>“standard”</code>
+also keeps sequence, region, and alignment annotations.
+<code>“full”</code> keeps all input annotations after the changes
+described under Value. Columns required by <code>schema</code> and
+<code>repertoire_schema</code> are kept with every profile.
 </td>
 </tr>
 <tr>
@@ -76,7 +91,7 @@ or <code>“full”</code>.
 <code id="repertoire_schema">repertoire_schema</code>
 </td>
 <td>
-Repertoire grouping passed to
+Columns that define repertoire groups. This is passed to
 <code>immundata::read_repertoires()</code>.
 </td>
 </tr>
@@ -85,15 +100,39 @@ Repertoire grouping passed to
 <code id="...">…</code>
 </td>
 <td>
-Other arguments passed to <code>immundata::read_repertoires()</code>.
+Additional arguments passed to
+<code>immundata::read_repertoires()</code>.
 </td>
 </tr>
 </table>
+
+## Value
+
+An immundata::ImmunData object containing the imported repertoires and
+available annotations. <strong>Column names kept unchanged:</strong>
+Supplied AIRR names such as <code>cell_id</code>, <code>locus</code>,
+<code>v_call</code>, <code>d_call</code>, <code>j_call</code>,
+<code>junction</code>, <code>junction_aa</code>, and
+<code>consensus_count</code> keep their names. When
+<code>umi_count</code> is absent and <code>duplicate_count</code> is
+present, the source <code>duplicate_count</code> column is renamed to
+<code>umi_count</code>. Its original value is also kept as
+<code>source_duplicate_count</code> in the <code>full</code> column
+profile. When <code>umi_count</code> is already present,
+<code>duplicate_count</code> keeps its name and its separate copy count.
+<code>umi_count</code> counts distinct UMIs and
+<code>consensus_count</code> counts reads supporting consensus
+sequences. Other available columns depend on the input and
+<code>column_profile</code>. Source and manifest annotations keep their
+names.
 
 ## Examples
 
 ``` r
 library("immunread")
+
+# Use one thread for this small example.
+duckplyr::db_exec("SET threads TO 1")
 
 path <- system.file("extdata", "dandelion", "0.5.5", "contigs.csv.gz",
   package = "immunread", mustWork = TRUE)
