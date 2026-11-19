@@ -2,3 +2,5 @@
 .venv_altdoc
 altdoc/freeze.rds
 docs/
+.DS_Store
+.Rhistory

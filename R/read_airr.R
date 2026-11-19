@@ -10,8 +10,7 @@ prepare_airr <- function(data, schema, column_profile, repertoire_schema, count_
 
 #' @title Read an AIRR Rearrangement table as bulk repertoire data
 #' @description Reads a bulk
-#'   [AIRR Rearrangement table](https://docs.airr-community.org/en/stable/datarep/rearrangements.html)
-#'   and keeps productive sequences for repertoire analysis with 'immundata'.
+#'   [AIRR Rearrangement table](https://docs.airr-community.org/en/stable/datarep/rearrangements.html).
 #'
 #' @param path One or more repertoire file paths or a file pattern such as
 #'   `"data/*.tsv"`. Use `"<manifest>"` to read the paths from `manifest`.
@@ -30,15 +29,14 @@ prepare_airr <- function(data, schema, column_profile, repertoire_schema, count_
 #'   passed to [immundata::read_repertoires()].
 #' @param ... Additional arguments passed to [immundata::read_repertoires()].
 #'
-#' @details To measure bulk abundance, the function uses `duplicate_count` when
-#'   that column is present. It uses `umi_count` when `duplicate_count` is absent.
-#'   When neither column is present, each retained row represents one chain
-#'   observation without a supplied abundance value.
+#' @details Counts are taken from `duplicate_count`, or from `umi_count` if
+#'   `duplicate_count` is absent. If neither column is present, no count column
+#'   is passed to `immundata`.
 #'
-#'   Count values must be finite whole numbers that are zero or greater. An
-#'   optional count field can contain missing values, but the selected abundance
-#'   field must have a value for every productive input row. Missing abundance
-#'   causes an error and is not replaced with zero or one.
+#'   Count values must be finite, non-negative integers. Optional count columns
+#'   can contain missing values, but the selected count column must have a value
+#'   for every productive input row. Missing counts cause an error; they are not
+#'   replaced with zero or one.
 #'
 #'   In recognized sequence and count fields, text such as `"NA"` and `"None"`
 #'   becomes a missing value (`NA` in R). A row is excluded if it has no value for
@@ -48,11 +46,11 @@ prepare_airr <- function(data, schema, column_profile, repertoire_schema, count_
 #'   data. The chain annotations keep the supplied AIRR column names, including
 #'   `v_call`, `d_call`, `j_call`, `junction`, and `junction_aa` when present.
 #'
-#'   **Count column names are kept unchanged.** `duplicate_count`, `umi_count`,
-#'   and `consensus_count` remain separate fields. In AIRR terminology, they
+#'   `duplicate_count`, `umi_count`, and `consensus_count` remain separate
+#'   columns with their original names. In AIRR terminology, they
 #'   describe sequence copies, distinct UMIs, and reads used to build a consensus
-#'   or contig. Choosing a count field for abundance does not rename the other
-#'   fields or change their units.
+#'   or contig. Selecting a count column does not rename the other count columns
+#'   or change their units.
 #'   The reader also keeps `cdr3` and `cdr3_aa` separate from the junction fields.
 #'   It does not use one name as a replacement for another.
 #'
@@ -64,9 +62,12 @@ prepare_airr <- function(data, schema, column_profile, repertoire_schema, count_
 #' duckplyr::db_exec("SET threads TO 1")
 #'
 #' path <- system.file("extdata", "airr", "2.0-bulk", "contigs.tsv.gz",
-#'   package = "immunread", mustWork = TRUE)
-#' idata <- read_airr_bulk(path, schema = c("v_call", "junction_aa"),
-#'   output_folder = tempfile("immunread-"))
+#'   package = "immunread", mustWork = TRUE
+#' )
+#' idata <- read_airr_bulk(path,
+#'   schema = c("v_call", "junction_aa"),
+#'   output_folder = tempfile("immunread-")
+#' )
 #' @export
 read_airr_bulk <- function(path, schema, manifest = NULL,
                            manifest_file_col = "file", column_profile = "standard",
@@ -102,7 +103,7 @@ read_airr_bulk <- function(path, schema, manifest = NULL,
 #'   without changing its name. When a source `barcode` column is supplied, it
 #'   is also available with `column_profile = "full"`.
 #'
-#'   **Other AIRR column names are kept unchanged.** This includes gene calls,
+#'   Other AIRR columns keep their original names. This includes gene calls,
 #'   `locus`, `junction`, `junction_aa`, `duplicate_count`, `umi_count`, and
 #'   `consensus_count` when present. The function does not rename a count field
 #'   when it uses that field to select chains. These count names describe
@@ -118,11 +119,16 @@ read_airr_bulk <- function(path, schema, manifest = NULL,
 #' duckplyr::db_exec("SET threads TO 1")
 #'
 #' path <- system.file("extdata", "airr", "2.0-sc", "contigs.tsv.gz",
-#'   package = "immunread", mustWork = TRUE)
+#'   package = "immunread", mustWork = TRUE
+#' )
 #' schema <- immundata::make_receptor_schema(
-#'   c("v_call", "junction_aa"), chains = "TRB")
-#' idata <- read_airr_sc(path, schema = schema,
-#'   output_folder = tempfile("immunread-"))
+#'   c("v_call", "junction_aa"),
+#'   chains = "TRB"
+#' )
+#' idata <- read_airr_sc(path,
+#'   schema = schema,
+#'   output_folder = tempfile("immunread-")
+#' )
 #' @export
 read_airr_sc <- function(path, schema, manifest = NULL,
                          manifest_file_col = "file", column_profile = "standard",

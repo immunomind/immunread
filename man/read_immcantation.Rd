@@ -43,9 +43,8 @@ passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}
 }
 \value{
 An \link[immundata:ImmunData]{immundata::ImmunData} object containing the imported repertoires
-and available annotations. \strong{Column names kept unchanged:} The reader
-does not convert input column names. AIRR fields kept by the selected
-\code{column_profile} keep their supplied names, including \code{cell_id}, \code{locus},
+and available annotations. Columns retained by \code{column_profile} keep their
+original names, including \code{cell_id}, \code{locus},
 \code{v_call}, \code{d_call}, \code{j_call}, \code{junction}, \code{junction_aa},
 \code{duplicate_count}, \code{umi_count}, and \code{consensus_count}. These count columns
 remain separate. \code{umi_count} counts distinct UMIs, \code{duplicate_count}
@@ -63,14 +62,11 @@ in bulk or single-cell mode and reads their annotations into an
 
 In single-cell mode, the reader passes available chains to \code{immundata},
 which selects chains according to \code{schema} and count ranking. In bulk mode,
-abundance uses \code{duplicate_count} when that field is present. If it is
-absent, abundance uses \code{umi_count}. In single-cell mode, chains are ranked
-by \code{umi_count} when present. If it is absent, ranking uses
-\code{duplicate_count}. If both fields are absent, ranking uses
-\code{consensus_count}. Counts used for abundance or ranking must be finite whole
-numbers that are zero or greater, with no missing values. Unavailable
-source annotations remain missing and are not reconstructed from other
-regions.
+counts are taken from \code{duplicate_count}, or from \code{umi_count} if
+\code{duplicate_count} is absent. In single-cell mode, chains are ranked by
+\code{umi_count} when present, then by \code{duplicate_count} if \code{umi_count} is absent,
+and finally by \code{consensus_count} if both are absent. The selected count
+column must contain finite, non-negative integers with no missing values.
 }
 \examples{
 \dontrun{

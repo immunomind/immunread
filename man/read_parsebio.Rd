@@ -45,8 +45,9 @@ and available chain annotations. For each of \code{TRA}, \code{TRB},
 \verb{*_D} to \code{d_call}, \verb{*_J} to \code{j_call}, and \verb{*_C} to \code{c_call}.
 It copies \verb{*_cdr3_aa} to \code{junction_aa} and \verb{*_transcript_count} to \code{umi_count} for chain
 ranking and \verb{*_read_count} to \code{consensus_count}. \code{Barcode} maps to
-\code{cell_id}, and the group name supplies \code{locus} after removing the
-\code{secondary_} prefix. The group name is also recorded in \code{source_chain}.
+\code{cell_id}. \code{locus} is set to \code{TRA} for primary and secondary TRA chains,
+and to \code{TRB} for primary and secondary TRB chains. The group name is
+recorded in \code{source_chain}.
 
 AIRR output columns that are already present keep their names and are used
 instead of the corresponding source columns. The reader always sets
@@ -57,12 +58,11 @@ If no group has a read-count column,
 groups without it have \code{NA} for \code{consensus_count}. Missing optional gene
 calls also have \code{NA}.
 
-With \code{column_profile = "full"}, original source columns,
-including \code{Barcode} and the wide chain columns, remain under their original
-names and the mapped columns are added. \strong{These source column names are
-kept unchanged.} With \code{column_profile = "minimal"} or \code{"standard"}, the
-reader keeps the columns included in that profile. The available columns
-also depend on the input and \code{schema}.
+With \code{column_profile = "full"}, the reader retains the original columns,
+including \code{Barcode} and the wide chain columns, and adds the AIRR columns.
+With \code{column_profile = "minimal"} or \code{"standard"}, the reader keeps the
+columns included in that profile. The available columns also depend on
+the input and \code{schema}.
 }
 \description{
 Reads Parse Biosciences TCR tables in which each row describes

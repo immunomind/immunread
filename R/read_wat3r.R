@@ -38,9 +38,8 @@
 #'   groups without it have `NA` for `consensus_count`. Missing optional gene
 #'   calls also have `NA`.
 #'
-#'   With `column_profile = "full"`, original source columns, including `BC`
-#'   and the wide chain columns, remain under their original names and the
-#'   mapped columns are added. **These source column names are kept unchanged.**
+#'   With `column_profile = "full"`, the reader retains the original columns,
+#'   including `BC` and the wide chain columns, and adds the AIRR columns.
 #'   With `column_profile = "minimal"` or `"standard"`, the reader keeps
 #'   the columns included in that profile. The available columns also depend
 #'   on the input and `schema`.

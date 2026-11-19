@@ -18,20 +18,18 @@
 #'   `junction`, `cdr3` to `junction_aa`, `umis` to `umi_count`, and `reads` to
 #'   `consensus_count`.
 #'
-#'   For each of `fwr1`, `cdr1`, `fwr2`, `cdr2`, `fwr3`, and `fwr4`, the source
-#'   name without `_aa` or `_nt` contains amino acids. For example, when both
-#'   source fields are present, `fwr1` is copied to `fwr1_aa` and `fwr1_nt` is
-#'   copied to the AIRR output column `fwr1`. This same pattern applies to all
-#'   six regions. Source values replace any existing region output fields. If
-#'   the source name without a suffix is present without a matching `_nt` field,
-#'   that name is removed after the amino-acid copy is made. The CDR3 source
-#'   columns are renamed `source_cdr3` and `source_cdr3_nt` when present.
-#'   **Column names kept unchanged:** `productive` keeps its source name. The
-#'   reader uses this field to remove unproductive contigs when it is supplied.
+#'   In 10x files, `fwr1` contains amino acid sequences, while `fwr1_nt`
+#'   contains nucleotide sequences. The reader copies `fwr1` to `fwr1_aa`,
+#'   then replaces `fwr1` with the values from `fwr1_nt`. If `fwr1_nt` is
+#'   absent, `fwr1` is dropped after its values are copied to `fwr1_aa`.
+#'   The same rule applies to `cdr1`, `fwr2`, `cdr2`, `fwr3`, and `fwr4`.
+#'   These copies overwrite any existing values in the destination columns.
+#'   The CDR3 source columns are renamed `source_cdr3` and `source_cdr3_nt`
+#'   when present. If `productive` is supplied, unproductive contigs are removed.
 #'   `umi_count` records distinct UMIs, and `consensus_count` records supporting
-#'   reads. Other source columns
-#'   keep their names in the full profile. The selected chains in the returned
-#'   object depend on the schema and count settings passed to `immundata`.
+#'   reads. Other source columns keep their names in the full profile.
+#'   `immundata` selects chains according to `schema`, using `umi_count`
+#'   to rank them.
 #' @examples
 #' # Use one thread for this small example.
 #' duckplyr::db_exec("SET threads TO 1")

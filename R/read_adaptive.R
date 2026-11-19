@@ -29,14 +29,13 @@
 #'   among `rearrangement` and `nucleotide` to `sequence`, and copies
 #'   `templates` to `duplicate_count`.
 #'
-#'   **Column names kept unchanged:** `productive` keeps its name, and rows
-#'   that are not productive are filtered out. Source `seq_reads`,
+#'   Nonproductive rows are removed. Source `seq_reads`,
 #'   `sequenceStatus`, and `frame_type` keep their names in the full profile,
 #'   as do other source fields. The source `rearrangement_type` describes gene
 #'   composition and is retained as
 #'   `source_rearrangement_type` in the full profile. This is not AIRR's field
-#'   for observed, simulated, or inferred origin. Adaptive abundance values are
-#'   copy counts, not UMI counts, and the reader does not infer UMIs.
+#'   for observed, simulated, or inferred origin. Adaptive counts represent
+#'   copies, not distinct UMIs. The reader does not calculate UMI counts.
 #' @examples
 #' # Use one thread for this small example.
 #' duckplyr::db_exec("SET threads TO 1")

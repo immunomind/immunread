@@ -54,9 +54,9 @@ fractional part is removed to give \code{consensus_count}, matching the
 upstream AIRR exporter. For example, a read-support estimate of 7.9 gives
 \code{consensus_count} 7. TRUST4 provides no separate UMI count, so
 \code{consensus_count} is used for chain ranking. Empty and \code{*} chain fields
-are skipped. With \code{column_profile = "full"}, original input columns such as \code{X.barcode} and
-the embedded chain fields remain under their original names, and the
-mapped columns are added. \strong{These input column names are kept unchanged.}
+are skipped. With \code{column_profile = "full"}, the reader retains the
+original columns, including \code{X.barcode} and the embedded chain fields,
+and adds the AIRR columns.
 \code{source_read_count} is also available with this profile. The contents of
 the chain fields are split into the mapped columns above.
 With \code{column_profile = "minimal"} or \code{"standard"}, the reader

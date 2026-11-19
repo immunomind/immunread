@@ -6,19 +6,15 @@
 #'
 #' In single-cell mode, the reader passes available chains to `immundata`,
 #' which selects chains according to `schema` and count ranking. In bulk mode,
-#' abundance uses `duplicate_count` when that field is present. If it is
-#' absent, abundance uses `umi_count`. In single-cell mode, chains are ranked
-#' by `umi_count` when present. If it is absent, ranking uses
-#' `duplicate_count`. If both fields are absent, ranking uses
-#' `consensus_count`. Counts used for abundance or ranking must be finite whole
-#' numbers that are zero or greater, with no missing values. Unavailable
-#' source annotations remain missing and are not reconstructed from other
-#' regions.
+#' counts are taken from `duplicate_count`, or from `umi_count` if
+#' `duplicate_count` is absent. In single-cell mode, chains are ranked by
+#' `umi_count` when present, then by `duplicate_count` if `umi_count` is absent,
+#' and finally by `consensus_count` if both are absent. The selected count
+#' column must contain finite, non-negative integers with no missing values.
 #' @inheritParams read_airr_sc
 #' @return An [immundata::ImmunData] object containing the imported repertoires
-#'   and available annotations. **Column names kept unchanged:** The reader
-#'   does not convert input column names. AIRR fields kept by the selected
-#'   `column_profile` keep their supplied names, including `cell_id`, `locus`,
+#'   and available annotations. Columns retained by `column_profile` keep their
+#'   original names, including `cell_id`, `locus`,
 #'   `v_call`, `d_call`, `j_call`, `junction`, `junction_aa`,
 #'   `duplicate_count`, `umi_count`, and `consensus_count`. These count columns
 #'   remain separate. `umi_count` counts distinct UMIs, `duplicate_count`

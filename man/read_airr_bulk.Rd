@@ -43,11 +43,11 @@ An \link[immundata:ImmunData]{immundata::ImmunData} object containing the import
 data. The chain annotations keep the supplied AIRR column names, including
 \code{v_call}, \code{d_call}, \code{j_call}, \code{junction}, and \code{junction_aa} when present.
 
-\strong{Count column names are kept unchanged.} \code{duplicate_count}, \code{umi_count},
-and \code{consensus_count} remain separate fields. In AIRR terminology, they
+\code{duplicate_count}, \code{umi_count}, and \code{consensus_count} remain separate
+columns with their original names. In AIRR terminology, they
 describe sequence copies, distinct UMIs, and reads used to build a consensus
-or contig. Choosing a count field for abundance does not rename the other
-fields or change their units.
+or contig. Selecting a count column does not rename the other count columns
+or change their units.
 The reader also keeps \code{cdr3} and \code{cdr3_aa} separate from the junction fields.
 It does not use one name as a replacement for another.
 
@@ -57,19 +57,17 @@ annotations under their original column names.
 }
 \description{
 Reads a bulk
-\href{https://docs.airr-community.org/en/stable/datarep/rearrangements.html}{AIRR Rearrangement table}
-and keeps productive sequences for repertoire analysis with 'immundata'.
+\href{https://docs.airr-community.org/en/stable/datarep/rearrangements.html}{AIRR Rearrangement table}.
 }
 \details{
-To measure bulk abundance, the function uses \code{duplicate_count} when
-that column is present. It uses \code{umi_count} when \code{duplicate_count} is absent.
-When neither column is present, each retained row represents one chain
-observation without a supplied abundance value.
+Counts are taken from \code{duplicate_count}, or from \code{umi_count} if
+\code{duplicate_count} is absent. If neither column is present, no count column
+is passed to \code{immundata}.
 
-Count values must be finite whole numbers that are zero or greater. An
-optional count field can contain missing values, but the selected abundance
-field must have a value for every productive input row. Missing abundance
-causes an error and is not replaced with zero or one.
+Count values must be finite, non-negative integers. Optional count columns
+can contain missing values, but the selected count column must have a value
+for every productive input row. Missing counts cause an error; they are not
+replaced with zero or one.
 
 In recognized sequence and count fields, text such as \code{"NA"} and \code{"None"}
 becomes a missing value (\code{NA} in R). A row is excluded if it has no value for
@@ -81,7 +79,10 @@ other source annotations or to metadata added from \code{manifest}.
 duckplyr::db_exec("SET threads TO 1")
 
 path <- system.file("extdata", "airr", "2.0-bulk", "contigs.tsv.gz",
-  package = "immunread", mustWork = TRUE)
-idata <- read_airr_bulk(path, schema = c("v_call", "junction_aa"),
-  output_folder = tempfile("immunread-"))
+  package = "immunread", mustWork = TRUE
+)
+idata <- read_airr_bulk(path,
+  schema = c("v_call", "junction_aa"),
+  output_folder = tempfile("immunread-")
+)
 }

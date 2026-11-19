@@ -52,20 +52,18 @@ The reader maps \code{barcode} to \code{cell_id}, \code{contig_id} to \code{sequ
 \code{junction}, \code{cdr3} to \code{junction_aa}, \code{umis} to \code{umi_count}, and \code{reads} to
 \code{consensus_count}.
 
-For each of \code{fwr1}, \code{cdr1}, \code{fwr2}, \code{cdr2}, \code{fwr3}, and \code{fwr4}, the source
-name without \verb{_aa} or \verb{_nt} contains amino acids. For example, when both
-source fields are present, \code{fwr1} is copied to \code{fwr1_aa} and \code{fwr1_nt} is
-copied to the AIRR output column \code{fwr1}. This same pattern applies to all
-six regions. Source values replace any existing region output fields. If
-the source name without a suffix is present without a matching \verb{_nt} field,
-that name is removed after the amino-acid copy is made. The CDR3 source
-columns are renamed \code{source_cdr3} and \code{source_cdr3_nt} when present.
-\strong{Column names kept unchanged:} \code{productive} keeps its source name. The
-reader uses this field to remove unproductive contigs when it is supplied.
+In 10x files, \code{fwr1} contains amino acid sequences, while \code{fwr1_nt}
+contains nucleotide sequences. The reader copies \code{fwr1} to \code{fwr1_aa},
+then replaces \code{fwr1} with the values from \code{fwr1_nt}. If \code{fwr1_nt} is
+absent, \code{fwr1} is dropped after its values are copied to \code{fwr1_aa}.
+The same rule applies to \code{cdr1}, \code{fwr2}, \code{cdr2}, \code{fwr3}, and \code{fwr4}.
+These copies overwrite any existing values in the destination columns.
+The CDR3 source columns are renamed \code{source_cdr3} and \code{source_cdr3_nt}
+when present. If \code{productive} is supplied, unproductive contigs are removed.
 \code{umi_count} records distinct UMIs, and \code{consensus_count} records supporting
-reads. Other source columns
-keep their names in the full profile. The selected chains in the returned
-object depend on the schema and count settings passed to \code{immundata}.
+reads. Other source columns keep their names in the full profile.
+\code{immundata} selects chains according to \code{schema}, using \code{umi_count}
+to rank them.
 }
 \description{
 Reads 10x Genomics V(D)J

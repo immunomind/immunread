@@ -40,14 +40,14 @@ passed to \code{\link[immundata:read_repertoires]{immundata::read_repertoires()}
 }
 \value{
 An \link[immundata:ImmunData]{immundata::ImmunData} object containing the imported repertoires
-and available annotations. \strong{Column names kept unchanged:} Supplied AIRR
-names such as \code{cell_id}, \code{locus}, \code{v_call}, \code{d_call}, \code{j_call}, \code{junction},
-\code{junction_aa}, and \code{consensus_count} keep their names.
+and available annotations. AIRR columns such as \code{cell_id}, \code{locus},
+\code{v_call}, \code{d_call}, \code{j_call}, \code{junction}, \code{junction_aa}, and
+\code{consensus_count} keep their original names.
 When \code{umi_count} is absent and \code{duplicate_count} is present, the source
 \code{duplicate_count} column is renamed to \code{umi_count}. Its original value is
 also kept as \code{source_duplicate_count} in the \code{full} column profile. When
-\code{umi_count} is already present, \code{duplicate_count} keeps its name and its
-separate copy count. \code{umi_count} counts distinct UMIs and
+\code{umi_count} is already present, \code{duplicate_count} is left unchanged.
+\code{umi_count} counts distinct UMIs and
 \code{consensus_count} counts reads supporting consensus sequences. Other
 available columns depend on the input and \code{column_profile}. Source and
 manifest annotations keep their names.
@@ -56,13 +56,13 @@ manifest annotations keep their names.
 Reads Dandelion
 \href{https://sc-dandelion.readthedocs.io/en/latest/notebooks/base/0_dandelion_primer.html}{AIRR contig tables}
 (the \code{Dandelion.data} structure) and reads their cell, locus,
-receptor, and abundance fields into an \link[immundata:ImmunData]{immundata::ImmunData} object.
+receptor, and count fields into an \link[immundata:ImmunData]{immundata::ImmunData} object.
 
 The reader passes available chains to \code{immundata}, which selects chains
 according to \code{schema} and count ranking. It ranks chains by \code{umi_count} when
 present. If that field is absent, it uses \code{duplicate_count}. If both fields
 are absent, it uses \code{consensus_count}. Counts used for ranking must be
-finite whole numbers that are zero or greater, with no missing values.
+finite, non-negative integers with no missing values.
 }
 \examples{
 \dontrun{

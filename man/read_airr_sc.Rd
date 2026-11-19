@@ -45,7 +45,7 @@ into a new \code{cell_id} column. If \code{cell_id} is already present, it is us
 without changing its name. When a source \code{barcode} column is supplied, it
 is also available with \code{column_profile = "full"}.
 
-\strong{Other AIRR column names are kept unchanged.} This includes gene calls,
+Other AIRR columns keep their original names. This includes gene calls,
 \code{locus}, \code{junction}, \code{junction_aa}, \code{duplicate_count}, \code{umi_count}, and
 \code{consensus_count} when present. The function does not rename a count field
 when it uses that field to select chains. These count names describe
@@ -73,9 +73,14 @@ described in \code{\link[=read_airr_bulk]{read_airr_bulk()}} also apply here.
 duckplyr::db_exec("SET threads TO 1")
 
 path <- system.file("extdata", "airr", "2.0-sc", "contigs.tsv.gz",
-  package = "immunread", mustWork = TRUE)
+  package = "immunread", mustWork = TRUE
+)
 schema <- immundata::make_receptor_schema(
-  c("v_call", "junction_aa"), chains = "TRB")
-idata <- read_airr_sc(path, schema = schema,
-  output_folder = tempfile("immunread-"))
+  c("v_call", "junction_aa"),
+  chains = "TRB"
+)
+idata <- read_airr_sc(path,
+  schema = schema,
+  output_folder = tempfile("immunread-")
+)
 }

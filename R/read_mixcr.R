@@ -18,14 +18,14 @@
 #'   `cellGroup` is copied to `cell_id`, and `topChains` is copied to `locus`.
 #'   `allVHitsWithScore`, `allDHitsWithScore`, and `allJHitsWithScore` are copied
 #'   to `v_call`, `d_call`, and `j_call`. Scores in parentheses, such as `(123)`,
-#'   are removed from the output gene values, including values in existing gene output
-#'   columns. `nSeqCDR3` is copied to `junction`, and `aaSeqCDR3` to
+#'   are removed from `v_call`, `d_call`, and `j_call`, including when these
+#'   columns already exist in the input. `nSeqCDR3` is copied to `junction`, and `aaSeqCDR3` to
 #'   `junction_aa`. `uniqueMoleculeCount` is copied to `umi_count`, and
 #'   `readCount` to `consensus_count`. The reader does not copy `readCount` to
-#'   `duplicate_count` or infer that count from reads. **Column names kept
-#'   unchanged:** `duplicate_count` and `productive` keep their names when
-#'   present. Rows that are not productive are filtered out when that column is
-#'   supplied. Other source columns keep their names in the full profile.
+#'   `duplicate_count` or calculate it from read counts. If supplied,
+#'   `duplicate_count` is left unchanged. If `productive` is supplied,
+#'   nonproductive rows are removed. Other source columns keep their names
+#'   in the full profile.
 #' @examples
 #' # Use one thread for this small example.
 #' duckplyr::db_exec("SET threads TO 1")

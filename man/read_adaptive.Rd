@@ -61,14 +61,13 @@ In Analyzer and Connector files without \code{sequenceStatus}, the reader copies
 among \code{rearrangement} and \code{nucleotide} to \code{sequence}, and copies
 \code{templates} to \code{duplicate_count}.
 
-\strong{Column names kept unchanged:} \code{productive} keeps its name, and rows
-that are not productive are filtered out. Source \code{seq_reads},
+Nonproductive rows are removed. Source \code{seq_reads},
 \code{sequenceStatus}, and \code{frame_type} keep their names in the full profile,
 as do other source fields. The source \code{rearrangement_type} describes gene
 composition and is retained as
 \code{source_rearrangement_type} in the full profile. This is not AIRR's field
-for observed, simulated, or inferred origin. Adaptive abundance values are
-copy counts, not UMI counts, and the reader does not infer UMIs.
+for observed, simulated, or inferred origin. Adaptive counts represent
+copies, not distinct UMIs. The reader does not calculate UMI counts.
 }
 \description{
 Reads Adaptive immunoSEQ Analyzer or Connector tables.

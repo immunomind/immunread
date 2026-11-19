@@ -26,9 +26,9 @@
 #'   upstream AIRR exporter. For example, a read-support estimate of 7.9 gives
 #'   `consensus_count` 7. TRUST4 provides no separate UMI count, so
 #'   `consensus_count` is used for chain ranking. Empty and `*` chain fields
-#'   are skipped. With `column_profile = "full"`, original input columns such as `X.barcode` and
-#'   the embedded chain fields remain under their original names, and the
-#'   mapped columns are added. **These input column names are kept unchanged.**
+#'   are skipped. With `column_profile = "full"`, the reader retains the
+#'   original columns, including `X.barcode` and the embedded chain fields,
+#'   and adds the AIRR columns.
 #'   `source_read_count` is also available with this profile. The contents of
 #'   the chain fields are split into the mapped columns above.
 #'   With `column_profile = "minimal"` or `"standard"`, the reader

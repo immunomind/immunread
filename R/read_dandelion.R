@@ -2,23 +2,23 @@
 #' @description Reads Dandelion
 #'   [AIRR contig tables](https://sc-dandelion.readthedocs.io/en/latest/notebooks/base/0_dandelion_primer.html)
 #'   (the `Dandelion.data` structure) and reads their cell, locus,
-#'   receptor, and abundance fields into an [immundata::ImmunData] object.
+#'   receptor, and count fields into an [immundata::ImmunData] object.
 #'
 #' The reader passes available chains to `immundata`, which selects chains
 #' according to `schema` and count ranking. It ranks chains by `umi_count` when
 #' present. If that field is absent, it uses `duplicate_count`. If both fields
 #' are absent, it uses `consensus_count`. Counts used for ranking must be
-#' finite whole numbers that are zero or greater, with no missing values.
+#' finite, non-negative integers with no missing values.
 #' @inheritParams read_airr_sc
 #' @return An [immundata::ImmunData] object containing the imported repertoires
-#'   and available annotations. **Column names kept unchanged:** Supplied AIRR
-#'   names such as `cell_id`, `locus`, `v_call`, `d_call`, `j_call`, `junction`,
-#'   `junction_aa`, and `consensus_count` keep their names.
+#'   and available annotations. AIRR columns such as `cell_id`, `locus`,
+#'   `v_call`, `d_call`, `j_call`, `junction`, `junction_aa`, and
+#'   `consensus_count` keep their original names.
 #'   When `umi_count` is absent and `duplicate_count` is present, the source
 #'   `duplicate_count` column is renamed to `umi_count`. Its original value is
 #'   also kept as `source_duplicate_count` in the `full` column profile. When
-#'   `umi_count` is already present, `duplicate_count` keeps its name and its
-#'   separate copy count. `umi_count` counts distinct UMIs and
+#'   `umi_count` is already present, `duplicate_count` is left unchanged.
+#'   `umi_count` counts distinct UMIs and
 #'   `consensus_count` counts reads supporting consensus sequences. Other
 #'   available columns depend on the input and `column_profile`. Source and
 #'   manifest annotations keep their names.

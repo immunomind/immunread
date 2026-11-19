@@ -6,6 +6,7 @@ repo_name: immunomind/immunread
 theme:
   name: material
   icon:
+    logo: material/script-text-outline
     repo: fontawesome/brands/github
   palette:
     - media: "(prefers-color-scheme: light)"

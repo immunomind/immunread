@@ -48,14 +48,14 @@ columns remain alongside the output columns.
 \code{cellGroup} is copied to \code{cell_id}, and \code{topChains} is copied to \code{locus}.
 \code{allVHitsWithScore}, \code{allDHitsWithScore}, and \code{allJHitsWithScore} are copied
 to \code{v_call}, \code{d_call}, and \code{j_call}. Scores in parentheses, such as \code{(123)},
-are removed from the output gene values, including values in existing gene output
-columns. \code{nSeqCDR3} is copied to \code{junction}, and \code{aaSeqCDR3} to
+are removed from \code{v_call}, \code{d_call}, and \code{j_call}, including when these
+columns already exist in the input. \code{nSeqCDR3} is copied to \code{junction}, and \code{aaSeqCDR3} to
 \code{junction_aa}. \code{uniqueMoleculeCount} is copied to \code{umi_count}, and
 \code{readCount} to \code{consensus_count}. The reader does not copy \code{readCount} to
-\code{duplicate_count} or infer that count from reads. \strong{Column names kept
-unchanged:} \code{duplicate_count} and \code{productive} keep their names when
-present. Rows that are not productive are filtered out when that column is
-supplied. Other source columns keep their names in the full profile.
+\code{duplicate_count} or calculate it from read counts. If supplied,
+\code{duplicate_count} is left unchanged. If \code{productive} is supplied,
+nonproductive rows are removed. Other source columns keep their names
+in the full profile.
 }
 \description{
 Reads MiXCR

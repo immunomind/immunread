@@ -20,8 +20,9 @@
 #'   `*_D` to `d_call`, `*_J` to `j_call`, and `*_C` to `c_call`.
 #'   It copies `*_cdr3_aa` to `junction_aa` and `*_transcript_count` to `umi_count` for chain
 #'   ranking and `*_read_count` to `consensus_count`. `Barcode` maps to
-#'   `cell_id`, and the group name supplies `locus` after removing the
-#'   `secondary_` prefix. The group name is also recorded in `source_chain`.
+#'   `cell_id`. `locus` is set to `TRA` for primary and secondary TRA chains,
+#'   and to `TRB` for primary and secondary TRB chains. The group name is
+#'   recorded in `source_chain`.
 #'
 #'   AIRR output columns that are already present keep their names and are used
 #'   instead of the corresponding source columns. The reader always sets
@@ -32,12 +33,11 @@
 #'   groups without it have `NA` for `consensus_count`. Missing optional gene
 #'   calls also have `NA`.
 #'
-#'   With `column_profile = "full"`, original source columns,
-#'   including `Barcode` and the wide chain columns, remain under their original
-#'   names and the mapped columns are added. **These source column names are
-#'   kept unchanged.** With `column_profile = "minimal"` or `"standard"`, the
-#'   reader keeps the columns included in that profile. The available columns
-#'   also depend on the input and `schema`.
+#'   With `column_profile = "full"`, the reader retains the original columns,
+#'   including `Barcode` and the wide chain columns, and adds the AIRR columns.
+#'   With `column_profile = "minimal"` or `"standard"`, the reader keeps the
+#'   columns included in that profile. The available columns also depend on
+#'   the input and `schema`.
 #' @examples
 #' # Use one thread for this small example.
 #' duckplyr::db_exec("SET threads TO 1")
