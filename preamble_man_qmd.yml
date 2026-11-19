@@ -2,5 +2,7 @@
 format:
   md:
     prefer-html: true
+    # Preserve the HTML argument tables produced from Rd and keep R quotes straight.
+    from: markdown-smart-markdown_in_html_blocks
 ---
 

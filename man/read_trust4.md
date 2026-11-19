@@ -19,7 +19,7 @@ columns. See the TRUST4 paper,
 [doi:10.1038/s41592-021-01142-2](https://doi.org/10.1038/s41592-021-01142-2).
 
 Each non-empty primary or secondary chain record becomes a row before
-‘immundata’ selects the chains used to construct receptors.
+'immundata' selects the chains used to construct receptors.
 
 ## Usage
 
@@ -36,76 +36,64 @@ Each non-empty primary or secondary chain record becomes a row before
 
 ## Arguments
 
-<table role="presentation">
+<table data-quarto-postprocess="true" role="presentation">
+<tbody>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="path">path</code>
-</td>
-<td>
-One or more repertoire file paths or a file pattern such as
-<code>“data/\*.tsv”</code>. Use <code>“\<manifest\>”</code> to read the
-paths from <code>manifest</code>.
-</td>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="path">path</code></td>
+<td>One or more repertoire file paths or a file pattern such as
+<code>"data/*.tsv"</code>. Use <code>"&lt;manifest&gt;"</code> to read
+the paths from <code>manifest</code>.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="schema">schema</code>
-</td>
-<td>
-Column names that define receptor identity, such as <code>c(“v_call”,
-“junction_aa”)</code>. Use
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="schema">schema</code></td>
+<td>Column names that define receptor identity, such as
+<code>c("v_call", "junction_aa")</code>. Use
 <code>immundata::make_receptor_schema()</code> to also select one chain
-or a pair of chains from each cell.
-</td>
+or a pair of chains from each cell.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="manifest">manifest</code>
-</td>
-<td>
-An optional data frame with file paths and sample annotations.
-</td>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="manifest">manifest</code></td>
+<td>An optional data frame with file paths and sample annotations.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="manifest_file_col">manifest_file_col</code>
-</td>
-<td>
-The name of the manifest column with file paths when <code>path =
-“\<manifest\>”</code>.
-</td>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="manifest_file_col">manifest_file_col</code></td>
+<td>The name of the manifest column with file paths when
+<code>path = "&lt;manifest&gt;"</code>.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="column_profile">column_profile</code>
-</td>
-<td>
-Which input annotations to keep. <code>“minimal”</code> keeps core
-identifiers, gene calls, junctions, and counts. <code>“standard”</code>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="column_profile">column_profile</code></td>
+<td>Which input annotations to keep. <code>"minimal"</code> keeps core
+identifiers, gene calls, junctions, and counts. <code>"standard"</code>
 also keeps sequence, region, and alignment annotations.
-<code>“full”</code> keeps all input annotations after the changes
+<code>"full"</code> keeps all input annotations after the changes
 described under Value. Columns required by <code>schema</code> and
-<code>repertoire_schema</code> are kept with every profile.
-</td>
+<code>repertoire_schema</code> are kept with every profile.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="repertoire_schema">repertoire_schema</code>
-</td>
-<td>
-Columns that define repertoire groups. This is passed to
-<code>immundata::read_repertoires()</code>.
-</td>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="repertoire_schema">repertoire_schema</code></td>
+<td>Columns that define repertoire groups. This is passed to
+<code>immundata::read_repertoires()</code>.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="...">…</code>
-</td>
-<td>
-Additional arguments passed to
-<code>immundata::read_repertoires()</code>.
-</td>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="...">...</code></td>
+<td>Additional arguments passed to
+<code>immundata::read_repertoires()</code>.</td>
 </tr>
+</tbody>
 </table>
 
 ## Value
@@ -131,13 +119,12 @@ example, a read-support estimate of 7.9 gives
 <code>consensus_count</code> 7. TRUST4 provides no separate UMI count,
 so <code>consensus_count</code> is used for chain ranking. Empty and
 <code>\*</code> chain fields are skipped. With <code>column_profile =
-“full”</code>, original input columns such as <code>X.barcode</code> and
-the embedded chain fields remain under their original names, and the
-mapped columns are added. <strong>These input column names are kept
-unchanged.</strong> <code>source_read_count</code> is also available
-with this profile. The contents of the chain fields are split into the
-mapped columns above. With <code>column_profile = “minimal”</code> or
-<code>“standard”</code>, the reader keeps the columns included in that
+"full"</code>, the reader retains the original columns, including
+<code>X.barcode</code> and the embedded chain fields, and adds the AIRR
+columns. <code>source_read_count</code> is also available with this
+profile. The contents of the chain fields are split into the mapped
+columns above. With <code>column_profile = "minimal"</code> or
+<code>"standard"</code>, the reader keeps the columns included in that
 profile. The available columns also depend on the input and
 <code>schema</code>.
 

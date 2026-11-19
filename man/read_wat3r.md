@@ -2,7 +2,7 @@
 
 # Read WAT3R TCR tables
 
-[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_wat3r.R#L59)
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_wat3r.R#L58)
 
 ## Description
 
@@ -20,7 +20,7 @@ paper,
 
 The reader prepares one row for each supplied TRA, TRB, or secondary TRA
 chain. Rows without a CDR3 amino acid sequence are excluded before
-‘immundata’ selects the chains used to construct receptors.
+'immundata' selects the chains used to construct receptors.
 
 ## Usage
 
@@ -37,76 +37,64 @@ chain. Rows without a CDR3 amino acid sequence are excluded before
 
 ## Arguments
 
-<table role="presentation">
+<table data-quarto-postprocess="true" role="presentation">
+<tbody>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="path">path</code>
-</td>
-<td>
-One or more repertoire file paths or a file pattern such as
-<code>“data/\*.tsv”</code>. Use <code>“\<manifest\>”</code> to read the
-paths from <code>manifest</code>.
-</td>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="path">path</code></td>
+<td>One or more repertoire file paths or a file pattern such as
+<code>"data/*.tsv"</code>. Use <code>"&lt;manifest&gt;"</code> to read
+the paths from <code>manifest</code>.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="schema">schema</code>
-</td>
-<td>
-Column names that define receptor identity, such as <code>c(“v_call”,
-“junction_aa”)</code>. Use
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="schema">schema</code></td>
+<td>Column names that define receptor identity, such as
+<code>c("v_call", "junction_aa")</code>. Use
 <code>immundata::make_receptor_schema()</code> to also select one chain
-or a pair of chains from each cell.
-</td>
+or a pair of chains from each cell.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="manifest">manifest</code>
-</td>
-<td>
-An optional data frame with file paths and sample annotations.
-</td>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="manifest">manifest</code></td>
+<td>An optional data frame with file paths and sample annotations.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="manifest_file_col">manifest_file_col</code>
-</td>
-<td>
-The name of the manifest column with file paths when <code>path =
-“\<manifest\>”</code>.
-</td>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="manifest_file_col">manifest_file_col</code></td>
+<td>The name of the manifest column with file paths when
+<code>path = "&lt;manifest&gt;"</code>.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="column_profile">column_profile</code>
-</td>
-<td>
-Which input annotations to keep. <code>“minimal”</code> keeps core
-identifiers, gene calls, junctions, and counts. <code>“standard”</code>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="column_profile">column_profile</code></td>
+<td>Which input annotations to keep. <code>"minimal"</code> keeps core
+identifiers, gene calls, junctions, and counts. <code>"standard"</code>
 also keeps sequence, region, and alignment annotations.
-<code>“full”</code> keeps all input annotations after the changes
+<code>"full"</code> keeps all input annotations after the changes
 described under Value. Columns required by <code>schema</code> and
-<code>repertoire_schema</code> are kept with every profile.
-</td>
+<code>repertoire_schema</code> are kept with every profile.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="repertoire_schema">repertoire_schema</code>
-</td>
-<td>
-Columns that define repertoire groups. This is passed to
-<code>immundata::read_repertoires()</code>.
-</td>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="repertoire_schema">repertoire_schema</code></td>
+<td>Columns that define repertoire groups. This is passed to
+<code>immundata::read_repertoires()</code>.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="...">…</code>
-</td>
-<td>
-Additional arguments passed to
-<code>immundata::read_repertoires()</code>.
-</td>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="...">...</code></td>
+<td>Additional arguments passed to
+<code>immundata::read_repertoires()</code>.</td>
 </tr>
+</tbody>
 </table>
 
 ## Value
@@ -116,26 +104,16 @@ available chain annotations. Gene column names are converted for each
 chain group as follows:
 
 <ul>
-<li>
-
-For TRA, <code>TRAV</code> becomes <code>v_call</code> and
-<code>TRAJ</code> becomes <code>j_call</code>.
+<li> For TRA, <code>TRAV</code> becomes <code>v_call</code> and <code>TRAJ</code> becomes <code>j_call</code>.
 
 </li>
-<li>
-
-For TRB, <code>TRBV</code> becomes <code>v_call</code>,
-<code>TRBD</code> becomes <code>d_call</code>, and <code>TRBJ</code>
+<li> For TRB, <code>TRBV</code> becomes <code>v_call</code>, <code>TRBD</code> becomes <code>d_call</code>, and <code>TRBJ</code>
 becomes <code>j_call</code>.
 
 </li>
-<li>
+<li> For secondary TRA, <code>TRAV.2</code> becomes <code>v_call</code> and <code>TRAJ.2</code> becomes <code>j_call</code>.
 
-For secondary TRA, <code>TRAV.2</code> becomes <code>v_call</code> and
-<code>TRAJ.2</code> becomes <code>j_call</code>.
-
-</li>
-</ul>
+</li></ul>
 
 The matching <code>TRA_CDR3nuc</code>, <code>TRB_CDR3nuc</code>, and
 <code>TRA.2_CDR3nuc</code> values map to <code>cdr3</code>. These
@@ -162,13 +140,12 @@ chains from groups without it have <code>NA</code> for
 <code>consensus_count</code>. Missing optional gene calls also have
 <code>NA</code>.
 
-With <code>column_profile = “full”</code>, original source columns,
-including <code>BC</code> and the wide chain columns, remain under their
-original names and the mapped columns are added. <strong>These source
-column names are kept unchanged.</strong> With <code>column_profile =
-“minimal”</code> or <code>“standard”</code>, the reader keeps the
-columns included in that profile. The available columns also depend on
-the input and <code>schema</code>.
+With <code>column_profile = "full"</code>, the reader retains the
+original columns, including <code>BC</code> and the wide chain columns,
+and adds the AIRR columns. With <code>column_profile = "minimal"</code>
+or <code>"standard"</code>, the reader keeps the columns included in
+that profile. The available columns also depend on the input and
+<code>schema</code>.
 
 ## Examples
 

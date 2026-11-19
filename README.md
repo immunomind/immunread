@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>📥 <code>immunread</code> — Read immune repertoire data in R</h1>
+  <h1>📜 <code>immunread</code> — Read immune repertoire data in R</h1>
 </div>
 
 <p align="center">
@@ -8,15 +8,23 @@
   · <a href="https://github.com/immunomind">ImmunoMind ecosystem</a>
 </p>
 
-`immunread` imports AIRR, 10x Genomics, BD Rhapsody, MiXCR, Immcantation,
-Dandelion, Parse Biosciences, TRUST4, WAT3R, and Adaptive immunoSEQ data into
+`immunread` imports
+[AIRR](https://docs.airr-community.org/en/stable/datarep/rearrangements.html),
+[10x Genomics](https://www.10xgenomics.com/support/software/cell-ranger/latest/analysis/cr-5p-outputs-annotations-vdj),
+[BD Rhapsody](https://bd-rhapsody-bioinfo-docs.genomics.bd.com/outputs/outputs_vdj_contigs.html),
+[MiXCR](https://mixcr.com/mixcr/reference/overview-analysis-overview/),
+[Immcantation](https://immcantation.readthedocs.io/en/stable/),
+[Dandelion](https://sc-dandelion.readthedocs.io/en/latest/index.html),
+[Parse Biosciences](https://www.parsebiosciences.com/products/evercode-tcr/),
+[TRUST4](https://github.com/liulab-dfci/TRUST4),
+[WAT3R](https://github.com/mainciburu/WAT3R), and
+[Adaptive immunoSEQ](https://www.adaptivebiotech.com/) data into
 [`immundata::ImmunData`](https://github.com/immunomind/immundata) objects.
-Readers use duckplyr for large datasets and accept manifests through
-`immundata::read_repertoires()`.
 
 ## Installation
 
-Install the development packages from GitHub:
+Install the development packages from GitHub with
+[`pak`](https://pak.r-lib.org/) in `R`:
 
 ```r
 install.packages("pak")
@@ -39,4 +47,4 @@ idata <- read_airr_bulk(
 )
 ```
 
-The package is under development; its API may change before version 1.0.
+The package is under development, so its API may change before version 1.0.

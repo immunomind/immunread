@@ -2,13 +2,13 @@
 
 # Read Adaptive immunoSEQ Analyzer and Connector tables
 
-[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_adaptive.R#L52)
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_adaptive.R#L51)
 
 ## Description
 
 Reads Adaptive immunoSEQ Analyzer or Connector tables.
 
-Input columns are described in Adaptive’s
+Input columns are described in Adaptive's
 <a href="https://www.adaptivebiotech.com/wp-content/uploads/2019/07/MRK-00342_immunoSEQ_TechNote_DataExport_WEB_REV.pdf">Analyzer
 TSV export guide</a> and the legacy
 <a href="https://clients.adaptivebiotech.com/assets/downloads/immunoSEQ_AnalyzerManual.pdf">Analyzer
@@ -29,76 +29,64 @@ manual, Sample Export section</a>.
 
 ## Arguments
 
-<table role="presentation">
+<table data-quarto-postprocess="true" role="presentation">
+<tbody>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="path">path</code>
-</td>
-<td>
-One or more repertoire file paths or a file pattern such as
-<code>“data/\*.tsv”</code>. Use <code>“\<manifest\>”</code> to read the
-paths from <code>manifest</code>.
-</td>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="path">path</code></td>
+<td>One or more repertoire file paths or a file pattern such as
+<code>"data/*.tsv"</code>. Use <code>"&lt;manifest&gt;"</code> to read
+the paths from <code>manifest</code>.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="schema">schema</code>
-</td>
-<td>
-Column names that define receptor identity, such as <code>c(“v_call”,
-“junction_aa”)</code>. Use
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="schema">schema</code></td>
+<td>Column names that define receptor identity, such as
+<code>c("v_call", "junction_aa")</code>. Use
 <code>immundata::make_receptor_schema()</code> to also select one chain
-or a pair of chains from each cell.
-</td>
+or a pair of chains from each cell.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="manifest">manifest</code>
-</td>
-<td>
-An optional data frame with file paths and sample annotations.
-</td>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="manifest">manifest</code></td>
+<td>An optional data frame with file paths and sample annotations.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="manifest_file_col">manifest_file_col</code>
-</td>
-<td>
-The name of the manifest column with file paths when <code>path =
-“\<manifest\>”</code>.
-</td>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="manifest_file_col">manifest_file_col</code></td>
+<td>The name of the manifest column with file paths when
+<code>path = "&lt;manifest&gt;"</code>.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="column_profile">column_profile</code>
-</td>
-<td>
-Which input annotations to keep. <code>“minimal”</code> keeps core
-identifiers, gene calls, junctions, and counts. <code>“standard”</code>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="column_profile">column_profile</code></td>
+<td>Which input annotations to keep. <code>"minimal"</code> keeps core
+identifiers, gene calls, junctions, and counts. <code>"standard"</code>
 also keeps sequence, region, and alignment annotations.
-<code>“full”</code> keeps all input annotations after the changes
+<code>"full"</code> keeps all input annotations after the changes
 described under Value. Columns required by <code>schema</code> and
-<code>repertoire_schema</code> are kept with every profile.
-</td>
+<code>repertoire_schema</code> are kept with every profile.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="repertoire_schema">repertoire_schema</code>
-</td>
-<td>
-Columns that define repertoire groups. This is passed to
-<code>immundata::read_repertoires()</code>.
-</td>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="repertoire_schema">repertoire_schema</code></td>
+<td>Columns that define repertoire groups. This is passed to
+<code>immundata::read_repertoires()</code>.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="...">…</code>
-</td>
-<td>
-Additional arguments passed to
-<code>immundata::read_repertoires()</code>.
-</td>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="...">...</code></td>
+<td>Additional arguments passed to
+<code>immundata::read_repertoires()</code>.</td>
 </tr>
+</tbody>
 </table>
 
 ## Value
@@ -118,9 +106,9 @@ and <code>j_call</code>. It copies <code>aminoAcid</code> to
 <code>junction_aa</code>, <code>nucleotide</code> to
 <code>sequence</code>, and <code>count (templates/reads)</code> to
 <code>duplicate_count</code>. The reader sets <code>productive</code>
-from <code>sequenceStatus == “In”</code>. When <code>frame_type</code>
+from <code>sequenceStatus == "In"</code>. When <code>frame_type</code>
 is present, it sets <code>productive</code> from <code>frame_type ==
-“In”</code> instead.
+"In"</code> instead.
 
 In Analyzer and Connector files without <code>sequenceStatus</code>, the
 reader copies <code>v_resolved</code>, <code>d_resolved</code>, and
@@ -133,16 +121,14 @@ reader copies <code>v_resolved</code>, <code>d_resolved</code>, and
 <code>sequence</code>, and copies <code>templates</code> to
 <code>duplicate_count</code>.
 
-<strong>Column names kept unchanged:</strong> <code>productive</code>
-keeps its name, and rows that are not productive are filtered out.
-Source <code>seq_reads</code>, <code>sequenceStatus</code>, and
-<code>frame_type</code> keep their names in the full profile, as do
-other source fields. The source <code>rearrangement_type</code>
-describes gene composition and is retained as
-<code>source_rearrangement_type</code> in the full profile. This is not
-AIRR’s field for observed, simulated, or inferred origin. Adaptive
-abundance values are copy counts, not UMI counts, and the reader does
-not infer UMIs.
+Nonproductive rows are removed. Source <code>seq_reads</code>,
+<code>sequenceStatus</code>, and <code>frame_type</code> keep their
+names in the full profile, as do other source fields. The source
+<code>rearrangement_type</code> describes gene composition and is
+retained as <code>source_rearrangement_type</code> in the full profile.
+This is not AIRR's field for observed, simulated, or inferred origin.
+Adaptive counts represent copies, not distinct UMIs. The reader does not
+calculate UMI counts.
 
 ## Examples
 

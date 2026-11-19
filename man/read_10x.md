@@ -2,7 +2,7 @@
 
 # Read 10x Genomics V(D)J contigs
 
-[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_10x.R#L47)
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_10x.R#L45)
 
 ## Description
 
@@ -27,76 +27,64 @@ locus, gene, sequence, and count fields to AIRR-style columns.
 
 ## Arguments
 
-<table role="presentation">
+<table data-quarto-postprocess="true" role="presentation">
+<tbody>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="path">path</code>
-</td>
-<td>
-One or more repertoire file paths or a file pattern such as
-<code>“data/\*.tsv”</code>. Use <code>“\<manifest\>”</code> to read the
-paths from <code>manifest</code>.
-</td>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="path">path</code></td>
+<td>One or more repertoire file paths or a file pattern such as
+<code>"data/*.tsv"</code>. Use <code>"&lt;manifest&gt;"</code> to read
+the paths from <code>manifest</code>.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="schema">schema</code>
-</td>
-<td>
-Column names that define receptor identity, such as <code>c(“v_call”,
-“junction_aa”)</code>. Use
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="schema">schema</code></td>
+<td>Column names that define receptor identity, such as
+<code>c("v_call", "junction_aa")</code>. Use
 <code>immundata::make_receptor_schema()</code> to also select one chain
-or a pair of chains from each cell.
-</td>
+or a pair of chains from each cell.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="manifest">manifest</code>
-</td>
-<td>
-An optional data frame with file paths and sample annotations.
-</td>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="manifest">manifest</code></td>
+<td>An optional data frame with file paths and sample annotations.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="manifest_file_col">manifest_file_col</code>
-</td>
-<td>
-The name of the manifest column with file paths when <code>path =
-“\<manifest\>”</code>.
-</td>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="manifest_file_col">manifest_file_col</code></td>
+<td>The name of the manifest column with file paths when
+<code>path = "&lt;manifest&gt;"</code>.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="column_profile">column_profile</code>
-</td>
-<td>
-Which input annotations to keep. <code>“minimal”</code> keeps core
-identifiers, gene calls, junctions, and counts. <code>“standard”</code>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="column_profile">column_profile</code></td>
+<td>Which input annotations to keep. <code>"minimal"</code> keeps core
+identifiers, gene calls, junctions, and counts. <code>"standard"</code>
 also keeps sequence, region, and alignment annotations.
-<code>“full”</code> keeps all input annotations after the changes
+<code>"full"</code> keeps all input annotations after the changes
 described under Value. Columns required by <code>schema</code> and
-<code>repertoire_schema</code> are kept with every profile.
-</td>
+<code>repertoire_schema</code> are kept with every profile.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="repertoire_schema">repertoire_schema</code>
-</td>
-<td>
-Columns that define repertoire groups. This is passed to
-<code>immundata::read_repertoires()</code>.
-</td>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="repertoire_schema">repertoire_schema</code></td>
+<td>Columns that define repertoire groups. This is passed to
+<code>immundata::read_repertoires()</code>.</td>
 </tr>
 <tr>
-<td style="white-space: nowrap; font-family: monospace; vertical-align: top">
-<code id="...">…</code>
-</td>
-<td>
-Additional arguments passed to
-<code>immundata::read_repertoires()</code>.
-</td>
+<td
+style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
+id="...">...</code></td>
+<td>Additional arguments passed to
+<code>immundata::read_repertoires()</code>.</td>
 </tr>
+</tbody>
 </table>
 
 ## Value
@@ -118,25 +106,22 @@ The reader maps <code>barcode</code> to <code>cell_id</code>,
 <code>umis</code> to <code>umi_count</code>, and <code>reads</code> to
 <code>consensus_count</code>.
 
-For each of <code>fwr1</code>, <code>cdr1</code>, <code>fwr2</code>,
-<code>cdr2</code>, <code>fwr3</code>, and <code>fwr4</code>, the source
-name without <code style="white-space: pre;">\_aa</code> or
-<code style="white-space: pre;">\_nt</code> contains amino acids. For
-example, when both source fields are present, <code>fwr1</code> is
-copied to <code>fwr1_aa</code> and <code>fwr1_nt</code> is copied to the
-AIRR output column <code>fwr1</code>. This same pattern applies to all
-six regions. Source values replace any existing region output fields. If
-the source name without a suffix is present without a matching
-<code style="white-space: pre;">\_nt</code> field, that name is removed
-after the amino-acid copy is made. The CDR3 source columns are renamed
-<code>source_cdr3</code> and <code>source_cdr3_nt</code> when present.
-<strong>Column names kept unchanged:</strong> <code>productive</code>
-keeps its source name. The reader uses this field to remove unproductive
-contigs when it is supplied. <code>umi_count</code> records distinct
-UMIs, and <code>consensus_count</code> records supporting reads. Other
-source columns keep their names in the full profile. The selected chains
-in the returned object depend on the schema and count settings passed to
-<code>immundata</code>.
+In 10x files, <code>fwr1</code> contains amino acid sequences, while
+<code>fwr1_nt</code> contains nucleotide sequences. The reader copies
+<code>fwr1</code> to <code>fwr1_aa</code>, then replaces
+<code>fwr1</code> with the values from <code>fwr1_nt</code>. If
+<code>fwr1_nt</code> is absent, <code>fwr1</code> is dropped after its
+values are copied to <code>fwr1_aa</code>. The same rule applies to
+<code>cdr1</code>, <code>fwr2</code>, <code>cdr2</code>,
+<code>fwr3</code>, and <code>fwr4</code>. These copies overwrite any
+existing values in the destination columns. The CDR3 source columns are
+renamed <code>source_cdr3</code> and <code>source_cdr3_nt</code> when
+present. If <code>productive</code> is supplied, unproductive contigs
+are removed. <code>umi_count</code> records distinct UMIs, and
+<code>consensus_count</code> records supporting reads. Other source
+columns keep their names in the full profile. <code>immundata</code>
+selects chains according to <code>schema</code>, using
+<code>umi_count</code> to rank them.
 
 ## Examples
 
