@@ -69,6 +69,6 @@ test_that("missing selected single-cell support does not silently switch count u
     v_call = "IGHV1*01", junction_aa = c("CASSF", "CASRF"),
     umi_count = c("2", "NA"), consensus_count = c(40, 90)
   ), path, row.names = FALSE)
-  expect_error(read_immcantation(path, c("v_call", "junction_aa"),
-    mode = "sc", output_folder = tempfile()), "Missing values.*umi_count")
+  expect_error(read_immcantation_sc(path, c("v_call", "junction_aa"),
+    output_folder = tempfile()), "Missing values.*umi_count")
 })

@@ -18,7 +18,7 @@ bulk and single-cell formats into `immundata::ImmunData` objects.
 - [Adaptive immunoSEQ](https://immunomind.github.io/immunread/man/read_adaptive.html)
 - [BD Rhapsody](https://immunomind.github.io/immunread/man/read_bd.html)
 - [Dandelion](https://immunomind.github.io/immunread/man/read_dandelion.html)
-- [Immcantation](https://immunomind.github.io/immunread/man/read_immcantation.html)
+- Immcantation: [bulk](https://immunomind.github.io/immunread/man/read_immcantation_bulk.html) and [single-cell](https://immunomind.github.io/immunread/man/read_immcantation_sc.html)
 - [MiXCR](https://immunomind.github.io/immunread/man/read_mixcr.html)
 - [Parse Biosciences](https://immunomind.github.io/immunread/man/read_parsebio.html)
 - [TRUST4](https://immunomind.github.io/immunread/man/read_trust4.html)

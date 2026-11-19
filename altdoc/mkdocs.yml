@@ -52,7 +52,8 @@ nav:
       - Adaptive immunoSEQ: man/read_adaptive.md
       - BD Rhapsody: man/read_bd.md
       - Dandelion: man/read_dandelion.md
-      - Immcantation: man/read_immcantation.md
+      - Immcantation bulk: man/read_immcantation_bulk.md
+      - Immcantation single-cell: man/read_immcantation_sc.md
       - MiXCR: man/read_mixcr.md
       - Parse Biosciences: man/read_parsebio.md
       - TRUST4: man/read_trust4.md

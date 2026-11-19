@@ -8,7 +8,7 @@ test_that("Immcantation single-cell fixture preserves UMI and read support", {
   schema <- immundata::make_receptor_schema(
     c("v_call", "junction_aa"), chains = "IGH"
   )
-  idata <- read_immcantation(path, schema, mode = "sc", output_folder = tempfile())
+  idata <- read_immcantation_sc(path, schema, output_folder = tempfile())
   result <- annotations(idata)
   expect_s3_class(idata, "ImmunData")
   expect_equal(nrow(result), 38L)
@@ -25,8 +25,8 @@ test_that("Immcantation single-cell fixture preserves UMI and read support", {
 
 test_that("Immcantation bulk fixture preserves sequence copy abundance", {
   idata <- read_fixture(
-    read_immcantation, c("immcantation", "bulk.tsv.gz"),
-    schema = c("v_call", "junction"), mode = "bulk",
+    read_immcantation_bulk, c("immcantation", "bulk.tsv.gz"),
+    schema = c("v_call", "junction"),
     repertoire_schema = "sample_id"
   )
   result <- annotations(idata)
@@ -50,6 +50,6 @@ test_that("Immcantation single-cell requires a real UMI or read count", {
     cell_id = "cell-a", locus = "TRB", productive = "T",
     v_call = "TRBV1*01", junction_aa = "CASSF"
   ), path, row.names = FALSE)
-  expect_error(read_immcantation(path, c("v_call", "junction_aa"),
-    mode = "sc", output_folder = tempfile()), "requires.*umi_col")
+  expect_error(read_immcantation_sc(path, c("v_call", "junction_aa"),
+    output_folder = tempfile()), "requires.*umi_col")
 })
