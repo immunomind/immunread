@@ -64,9 +64,11 @@ and uses its cell identifiers and counts to select receptor chains.
 
 To select chains, the function uses \code{umi_count} when it is present. If that
 column is absent, it uses \code{duplicate_count}. If both are absent, it uses
-\code{consensus_count}. Missing values in the selected field cause an error even
-when another count field has values. The count and missing-value rules
-described in \code{\link[=read_airr_bulk]{read_airr_bulk()}} also apply here.
+\code{consensus_count}. This is the same UMI-first priority used by
+\code{\link[=read_airr_bulk]{read_airr_bulk()}}, but here the counts are used to rank chains within each
+cell. Missing values in the selected field cause an error even when another
+count field has values. The count and missing-value rules described in
+\code{\link[=read_airr_bulk]{read_airr_bulk()}} also apply here.
 }
 \examples{
 # Use one thread for this small example.

@@ -29,9 +29,15 @@ prepare_airr <- function(data, schema, column_profile, repertoire_schema, count_
 #'   passed to [immundata::read_repertoires()].
 #' @param ... Additional arguments passed to [immundata::read_repertoires()].
 #'
-#' @details Counts are taken from `duplicate_count`, or from `umi_count` if
-#'   `duplicate_count` is absent. If neither column is present, no count column
-#'   is passed to `immundata`.
+#' @details Counts are taken from the first available column in this order:
+#'   `umi_count`, `duplicate_count`, `consensus_count`. If none is present, no
+#'   count column is passed to `immundata`.
+#'
+#'   So in short, this default prioritizes counts of tagged molecules over read
+#'   counts. Please mind that the
+#'   [AIRR schema v1.4.1 release notes](https://docs.airr-community.org/en/stable/datarep/news.html#version-1-4-1-august-27-2022)
+#'   distinguish distinct UMIs (`umi_count`) from duplicate sequence observations
+#'   (`duplicate_count`), and this priority order is our interpretation of the standard.
 #'
 #'   Count values must be finite, non-negative integers. Optional count columns
 #'   can contain missing values, but the selected count column must have a value
@@ -73,7 +79,9 @@ read_airr_bulk <- function(path, schema, manifest = NULL,
                            manifest_file_col = "file", column_profile = "standard",
                            repertoire_schema = "<auto>", ...) {
   columns <- source_columns(path, manifest, manifest_file_col)
-  count_col <- first_column(columns, c("duplicate_count", "umi_count"))
+  count_col <- first_column(
+    columns, c("umi_count", "duplicate_count", "consensus_count")
+  )
   prepare <- function(data, manifest = NULL) {
     prepare_airr(data, schema, column_profile, repertoire_schema, count_col)
   }
@@ -92,9 +100,11 @@ read_airr_bulk <- function(path, schema, manifest = NULL,
 #'
 #' To select chains, the function uses `umi_count` when it is present. If that
 #' column is absent, it uses `duplicate_count`. If both are absent, it uses
-#' `consensus_count`. Missing values in the selected field cause an error even
-#' when another count field has values. The count and missing-value rules
-#' described in [read_airr_bulk()] also apply here.
+#' `consensus_count`. This is the same UMI-first priority used by
+#' [read_airr_bulk()], but here the counts are used to rank chains within each
+#' cell. Missing values in the selected field cause an error even when another
+#' count field has values. The count and missing-value rules described in
+#' [read_airr_bulk()] also apply here.
 #'
 #' @inheritParams read_airr_bulk
 #' @return An [immundata::ImmunData] object containing the imported single-cell

@@ -17,15 +17,15 @@ test_that("reserved missing markers do not become receptor features or metadata 
   utils::write.table(data.frame(
     productive = "T", v_call = "TRBV1*01",
     junction_aa = c("CASSF", "NA", "None"), duplicate_count = c(2, 3, 4),
-    umi_count = "NA", custom_note = "NA"
+    consensus_count = "NA", custom_note = "NA"
   ), path, sep = "\t", quote = FALSE, row.names = FALSE)
   result <- read_airr_bulk(path, c("v_call", "junction_aa"),
     column_profile = "full", output_folder = tempfile()) |> annotations()
   expect_equal(result$junction_aa, "CASSF")
   expect_equal(result$v_call, "TRBV1*01")
   expect_equal(result$duplicate_count, 2)
-  expect_true(is.numeric(result$umi_count))
-  expect_true(is.na(result$umi_count))
+  expect_true(is.numeric(result$consensus_count))
+  expect_true(is.na(result$consensus_count))
   expect_equal(result$custom_note, "NA")
 })
 
@@ -46,6 +46,19 @@ test_that("counted bulk inputs reject missing or invalid abundance without subst
       paste("T", "TRBV1*01", "CASSF", value, sep = "\t")), path)
     expect_error(read_airr_bulk(path, c("v_call", "junction_aa"),
       output_folder = tempfile()), "count|Count", info = value)
+  }
+})
+
+test_that("AIRR readers reject missing selected UMI counts despite available read counts", {
+  path <- tempfile(fileext = ".tsv")
+  utils::write.table(data.frame(
+    cell_id = "cell-a", locus = "TRB", productive = "T",
+    v_call = "TRBV1*01", junction_aa = "CASSF",
+    umi_count = "NA", duplicate_count = 7L, consensus_count = 19L
+  ), path, sep = "\t", quote = FALSE, row.names = FALSE)
+  for (reader in list(read_airr_bulk, read_airr_sc)) {
+    expect_error(reader(path, c("v_call", "junction_aa"),
+      output_folder = tempfile()), "Missing values.*umi_count")
   }
 })
 

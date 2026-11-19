@@ -22,11 +22,27 @@ test_that("bulk-derived 1.6-sc fixture has expected chains and receptors in bulk
   expect_equal(idata$receptors |> dplyr::count() |> dplyr::pull(n), 737L)
 })
 
-test_that("AIRR bulk uses duplicate_count before umi_count and keeps count meanings", {
+test_that("AIRR bulk uses umi_count before duplicate_count and keeps count meanings", {
   idata <- read_fixture(read_airr_bulk, c("airr", "2.0-bulk", "contigs.tsv.gz"))
   a <- annotations(idata)
-  expect_equal(a$imd_n_chains, a$duplicate_count)
+  expect_equal(a$imd_n_chains, a$umi_count)
   expect_false(identical(a$duplicate_count, a$umi_count))
+})
+
+test_that("AIRR bulk falls back to duplicate then consensus counts", {
+  data <- data.frame(
+    productive = "T", v_call = "TRBV1*01", junction_aa = "CASSF",
+    duplicate_count = 7L, consensus_count = 19L
+  )
+  path <- tempfile(fileext = ".tsv")
+  for (count_col in c("duplicate_count", "consensus_count")) {
+    utils::write.table(data, path, sep = "\t", quote = FALSE, row.names = FALSE)
+    result <- read_airr_bulk(path, c("v_call", "junction_aa"),
+      output_folder = tempfile()) |> annotations()
+    expect_equal(result$imd_n_chains, data[[count_col]])
+    expect_equal(result[[count_col]], data[[count_col]])
+    data[[count_col]] <- NULL
+  }
 })
 
 test_that("AIRR column profiles prune source columns while protecting analysis fields", {

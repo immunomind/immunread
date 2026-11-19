@@ -60,9 +60,15 @@ Reads a bulk
 \href{https://docs.airr-community.org/en/stable/datarep/rearrangements.html}{AIRR Rearrangement table}.
 }
 \details{
-Counts are taken from \code{duplicate_count}, or from \code{umi_count} if
-\code{duplicate_count} is absent. If neither column is present, no count column
-is passed to \code{immundata}.
+Counts are taken from the first available column in this order:
+\code{umi_count}, \code{duplicate_count}, \code{consensus_count}. If none is present, no
+count column is passed to \code{immundata}.
+
+So in short, this default prioritizes counts of tagged molecules over read
+counts. Please mind that the
+\href{https://docs.airr-community.org/en/stable/datarep/news.html#version-1-4-1-august-27-2022}{AIRR schema v1.4.1 release notes}
+distinguish distinct UMIs (\code{umi_count}) from duplicate sequence observations
+(\code{duplicate_count}), and this priority order is our interpretation of the standard.
 
 Count values must be finite, non-negative integers. Optional count columns
 can contain missing values, but the selected count column must have a value
