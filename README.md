@@ -13,16 +13,25 @@ bulk and single-cell formats into `immundata::ImmunData` objects.
 
 ## Supported parsers
 
-- AIRR Rearrangement tables: [bulk](https://immunomind.github.io/immunread/man/read_airr_bulk.html) and [single-cell](https://immunomind.github.io/immunread/man/read_airr_sc.html)
-- [10x Genomics](https://immunomind.github.io/immunread/man/read_10x.html)
-- [Adaptive immunoSEQ](https://immunomind.github.io/immunread/man/read_adaptive.html)
-- [BD Rhapsody](https://immunomind.github.io/immunread/man/read_bd.html)
-- [Dandelion](https://immunomind.github.io/immunread/man/read_dandelion.html)
-- [Immcantation](https://immunomind.github.io/immunread/man/read_immcantation.html)
-- [MiXCR](https://immunomind.github.io/immunread/man/read_mixcr.html)
-- [Parse Biosciences](https://immunomind.github.io/immunread/man/read_parsebio.html)
-- [TRUST4](https://immunomind.github.io/immunread/man/read_trust4.html)
-- [WAT3R](https://immunomind.github.io/immunread/man/read_wat3r.html)
+| Tool / standard | Input format | Parser |
+|---|---|---|
+| AIRR-C | Bulk Rearrangement table (`.tsv`) | [`read_airr_bulk()`](https://immunomind.github.io/immunread/man/read_airr_bulk.html) |
+| | Single-cell Rearrangement table (`.tsv`) | [`read_airr_sc()`](https://immunomind.github.io/immunread/man/read_airr_sc.html) |
+| 10x Genomics | V(D)J contig annotations (`filtered_contig_annotations.csv`, `all_contig_annotations.csv`) | [`read_10x()`](https://immunomind.github.io/immunread/man/read_10x.html) |
+| Adaptive immunoSEQ | Analyzer export | [`read_adaptive()`](https://immunomind.github.io/immunread/man/read_adaptive.html) |
+| | Analyzer v2 export | [`read_adaptive()`](https://immunomind.github.io/immunread/man/read_adaptive.html) |
+| | Connector export | [`read_adaptive()`](https://immunomind.github.io/immunread/man/read_adaptive.html) |
+| BD Rhapsody | VDJ Contigs AIRR table (`*_VDJ_Dominant_Contigs_AIRR.tsv`, `*_VDJ_Unfiltered_Contigs_AIRR.tsv`) | [`read_bd()`](https://immunomind.github.io/immunread/man/read_bd.html) |
+| Dandelion | AIRR contig table (`Dandelion.data`) | [`read_dandelion()`](https://immunomind.github.io/immunread/man/read_dandelion.html) |
+| Immcantation | AIRR-C bulk table (`.tsv`) | [`read_immcantation_bulk()`](https://immunomind.github.io/immunread/man/read_immcantation_bulk.html) |
+| | AIRR-C single-cell table (`.tsv`) | [`read_immcantation_sc()`](https://immunomind.github.io/immunread/man/read_immcantation_sc.html) |
+| MiXCR | AIRR-C bulk export (`.tsv`) | [`read_airr_bulk()`](https://immunomind.github.io/immunread/man/read_airr_bulk.html) |
+| | AIRR-C single-cell export (`.tsv`) | [`read_airr_sc()`](https://immunomind.github.io/immunread/man/read_airr_sc.html) |
+| | Single-cell clone export | [`read_mixcr()`](https://immunomind.github.io/immunread/man/read_mixcr.html) |
+| Parse Biosciences | Wide per-cell TCR table | [`read_parsebio()`](https://immunomind.github.io/immunread/man/read_parsebio.html) |
+| | AIRR-C export (`tcr_annotation_airr.tsv`) | [`read_airr_sc()`](https://immunomind.github.io/immunread/man/read_airr_sc.html) |
+| TRUST4 | Cell table with embedded chain records | [`read_trust4()`](https://immunomind.github.io/immunread/man/read_trust4.html) |
+| WAT3R | Per-cell TCR table (`barcode_results.csv`) | [`read_wat3r()`](https://immunomind.github.io/immunread/man/read_wat3r.html) |
 
 ## Installation
 

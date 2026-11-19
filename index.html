@@ -19,7 +19,7 @@
       
       
       <link rel="icon" href="assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
     
     
       
@@ -584,14 +584,42 @@
   
   
     <li class="md-nav__item">
-      <a href="man/read_immcantation.html" class="md-nav__link">
+      <a href="man/read_immcantation_bulk.html" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Immcantation
+    Immcantation bulk
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="man/read_immcantation_sc.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Immcantation single-cell
   
 
     
@@ -814,18 +842,102 @@
 <p><code>immunread</code> simplifies reading immune repertoire data from the most common
 bulk and single-cell formats into <code>immundata::ImmunData</code> objects.</p>
 <h2 id="supported-parsers">Supported parsers</h2>
-<ul>
-<li>AIRR Rearrangement tables: <a href="https://immunomind.github.io/immunread/man/read_airr_bulk.html">bulk</a> and <a href="https://immunomind.github.io/immunread/man/read_airr_sc.html">single-cell</a></li>
-<li><a href="https://immunomind.github.io/immunread/man/read_10x.html">10x Genomics</a></li>
-<li><a href="https://immunomind.github.io/immunread/man/read_adaptive.html">Adaptive immunoSEQ</a></li>
-<li><a href="https://immunomind.github.io/immunread/man/read_bd.html">BD Rhapsody</a></li>
-<li><a href="https://immunomind.github.io/immunread/man/read_dandelion.html">Dandelion</a></li>
-<li><a href="https://immunomind.github.io/immunread/man/read_immcantation.html">Immcantation</a></li>
-<li><a href="https://immunomind.github.io/immunread/man/read_mixcr.html">MiXCR</a></li>
-<li><a href="https://immunomind.github.io/immunread/man/read_parsebio.html">Parse Biosciences</a></li>
-<li><a href="https://immunomind.github.io/immunread/man/read_trust4.html">TRUST4</a></li>
-<li><a href="https://immunomind.github.io/immunread/man/read_wat3r.html">WAT3R</a></li>
-</ul>
+<table>
+<thead>
+<tr>
+<th>Tool / standard</th>
+<th>Input format</th>
+<th>Parser</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AIRR-C</td>
+<td>Bulk Rearrangement table (<code>.tsv</code>)</td>
+<td><a href="https://immunomind.github.io/immunread/man/read_airr_bulk.html"><code>read_airr_bulk()</code></a></td>
+</tr>
+<tr>
+<td></td>
+<td>Single-cell Rearrangement table (<code>.tsv</code>)</td>
+<td><a href="https://immunomind.github.io/immunread/man/read_airr_sc.html"><code>read_airr_sc()</code></a></td>
+</tr>
+<tr>
+<td>10x Genomics</td>
+<td>V(D)J contig annotations (<code>filtered_contig_annotations.csv</code>, <code>all_contig_annotations.csv</code>)</td>
+<td><a href="https://immunomind.github.io/immunread/man/read_10x.html"><code>read_10x()</code></a></td>
+</tr>
+<tr>
+<td>Adaptive immunoSEQ</td>
+<td>Analyzer export</td>
+<td><a href="https://immunomind.github.io/immunread/man/read_adaptive.html"><code>read_adaptive()</code></a></td>
+</tr>
+<tr>
+<td></td>
+<td>Analyzer v2 export</td>
+<td><a href="https://immunomind.github.io/immunread/man/read_adaptive.html"><code>read_adaptive()</code></a></td>
+</tr>
+<tr>
+<td></td>
+<td>Connector export</td>
+<td><a href="https://immunomind.github.io/immunread/man/read_adaptive.html"><code>read_adaptive()</code></a></td>
+</tr>
+<tr>
+<td>BD Rhapsody</td>
+<td>VDJ Contigs AIRR table (<code>*_VDJ_Dominant_Contigs_AIRR.tsv</code>, <code>*_VDJ_Unfiltered_Contigs_AIRR.tsv</code>)</td>
+<td><a href="https://immunomind.github.io/immunread/man/read_bd.html"><code>read_bd()</code></a></td>
+</tr>
+<tr>
+<td>Dandelion</td>
+<td>AIRR contig table (<code>Dandelion.data</code>)</td>
+<td><a href="https://immunomind.github.io/immunread/man/read_dandelion.html"><code>read_dandelion()</code></a></td>
+</tr>
+<tr>
+<td>Immcantation</td>
+<td>AIRR-C bulk table (<code>.tsv</code>)</td>
+<td><a href="https://immunomind.github.io/immunread/man/read_immcantation_bulk.html"><code>read_immcantation_bulk()</code></a></td>
+</tr>
+<tr>
+<td></td>
+<td>AIRR-C single-cell table (<code>.tsv</code>)</td>
+<td><a href="https://immunomind.github.io/immunread/man/read_immcantation_sc.html"><code>read_immcantation_sc()</code></a></td>
+</tr>
+<tr>
+<td>MiXCR</td>
+<td>AIRR-C bulk export (<code>.tsv</code>)</td>
+<td><a href="https://immunomind.github.io/immunread/man/read_airr_bulk.html"><code>read_airr_bulk()</code></a></td>
+</tr>
+<tr>
+<td></td>
+<td>AIRR-C single-cell export (<code>.tsv</code>)</td>
+<td><a href="https://immunomind.github.io/immunread/man/read_airr_sc.html"><code>read_airr_sc()</code></a></td>
+</tr>
+<tr>
+<td></td>
+<td>Single-cell clone export</td>
+<td><a href="https://immunomind.github.io/immunread/man/read_mixcr.html"><code>read_mixcr()</code></a></td>
+</tr>
+<tr>
+<td>Parse Biosciences</td>
+<td>Wide per-cell TCR table</td>
+<td><a href="https://immunomind.github.io/immunread/man/read_parsebio.html"><code>read_parsebio()</code></a></td>
+</tr>
+<tr>
+<td></td>
+<td>AIRR-C export (<code>tcr_annotation_airr.tsv</code>)</td>
+<td><a href="https://immunomind.github.io/immunread/man/read_airr_sc.html"><code>read_airr_sc()</code></a></td>
+</tr>
+<tr>
+<td>TRUST4</td>
+<td>Cell table with embedded chain records</td>
+<td><a href="https://immunomind.github.io/immunread/man/read_trust4.html"><code>read_trust4()</code></a></td>
+</tr>
+<tr>
+<td>WAT3R</td>
+<td>Per-cell TCR table (<code>barcode_results.csv</code>)</td>
+<td><a href="https://immunomind.github.io/immunread/man/read_wat3r.html"><code>read_wat3r()</code></a></td>
+</tr>
+</tbody>
+</table>
 <h2 id="installation">Installation</h2>
 <p>Install the development packages from GitHub with
 <a href="https://pak.r-lib.org/"><code>pak</code></a> in <code>R</code>:</p>

@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
     
     
       
@@ -623,14 +623,42 @@
   
   
     <li class="md-nav__item">
-      <a href="read_immcantation.html" class="md-nav__link">
+      <a href="read_immcantation_bulk.html" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Immcantation
+    Immcantation bulk
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="read_immcantation_sc.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Immcantation single-cell
   
 
     
@@ -876,7 +904,7 @@
 
 
 <h1 id="read-an-airr-rearrangement-table-as-bulk-repertoire-data">Read an AIRR Rearrangement table as bulk repertoire data</h1>
-<p><a href="https://github.com/immunomind/immunread/tree/main/R/read_airr.R#L72"><strong>Source code</strong></a></p>
+<p><a href="https://github.com/immunomind/immunread/tree/main/R/read_airr.R#L78"><strong>Source code</strong></a></p>
 <h2 id="description">Description</h2>
 <p>Reads a bulk
 <a href="https://docs.airr-community.org/en/stable/datarep/rearrangements.html">AIRR
@@ -955,10 +983,17 @@ id="...">...</code></td>
 </table>
 
 <h2 id="details">Details</h2>
-<p>Counts are taken from <code>duplicate_count</code>, or from
-<code>umi_count</code> if <code>duplicate_count</code> is absent. If
-neither column is present, no count column is passed to
-<code>immundata</code>.</p>
+<p>Counts are taken from the first available column in this order:
+<code>umi_count</code>, <code>duplicate_count</code>,
+<code>consensus_count</code>. If none is present, no count column is
+passed to <code>immundata</code>.</p>
+<p>So in short, this default prioritizes counts of tagged molecules over
+read counts. Please mind that the
+<a href="https://docs.airr-community.org/en/stable/datarep/news.html#version-1-4-1-august-27-2022">AIRR
+schema v1.4.1 release notes</a> distinguish distinct UMIs
+(<code>umi_count</code>) from duplicate sequence observations
+(<code>duplicate_count</code>), and this priority order is our
+interpretation of the standard.</p>
 <p>Count values must be finite, non-negative integers. Optional count
 columns can contain missing values, but the selected count column must
 have a value for every productive input row. Missing counts cause an

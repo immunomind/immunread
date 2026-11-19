@@ -8,24 +8,24 @@
       
       
       
-        <link rel="canonical" href="https://immunomind.github.io/immunread/man/read_immcantation.html">
+        <link rel="canonical" href="https://immunomind.github.io/immunread/man/read_immcantation_bulk.html">
       
       
         <link rel="prev" href="read_dandelion.html">
       
       
-        <link rel="next" href="read_mixcr.html">
+        <link rel="next" href="read_immcantation_sc.html">
       
       
         
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
     
     
       
-        <title>Immcantation - immunread</title>
+        <title>Immcantation bulk - immunread</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#read-immcantation-airr-like-tables" class="md-skip">
+        <a href="#read-immcantation-airr-c-bulk-tables" class="md-skip">
           Skip to content
         </a>
       
@@ -114,7 +114,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Immcantation
+              Immcantation bulk
             
           </span>
         </div>
@@ -526,7 +526,7 @@
   <span class="md-ellipsis">
     
   
-    Immcantation
+    Immcantation bulk
   
 
     
@@ -537,14 +537,14 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <a href="read_immcantation.html" class="md-nav__link md-nav__link--active">
+      <a href="read_immcantation_bulk.html" class="md-nav__link md-nav__link--active">
         
   
   
   <span class="md-ellipsis">
     
   
-    Immcantation
+    Immcantation bulk
   
 
     
@@ -614,6 +614,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        See Also
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#examples" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -628,6 +639,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="read_immcantation_sc.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Immcantation single-cell
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -823,6 +862,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        See Also
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#examples" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -853,32 +903,25 @@
   
 
 
-<h1 id="read-immcantation-airr-like-tables">Read Immcantation AIRR-like tables</h1>
-<p><a href="https://github.com/immunomind/immunread/tree/main/R/read_immcantation.R#L38"><strong>Source code</strong></a></p>
+<h1 id="read-immcantation-airr-c-bulk-tables">Read Immcantation AIRR-C bulk tables</h1>
+<p><a href="https://github.com/immunomind/immunread/tree/main/R/read_immcantation.R#L34"><strong>Source code</strong></a></p>
 <h2 id="description">Description</h2>
-<p>Reads Immcantation tables using the
+<p>Reads bulk Immcantation tables using the
 <a href="https://changeo.readthedocs.io/en/stable/standard.html#airr-c-format">AIRR-C
-format</a> in bulk or single-cell mode and reads their annotations into
-an immundata::ImmunData object.</p>
-<p>In single-cell mode, the reader passes available chains to
-<code>immundata</code>, which selects chains according to
-<code>schema</code> and count ranking. In bulk mode, counts are taken
-from <code>duplicate_count</code>, or from <code>umi_count</code> if
-<code>duplicate_count</code> is absent. In single-cell mode, chains are
-ranked by <code>umi_count</code> when present, then by
-<code>duplicate_count</code> if <code>umi_count</code> is absent, and
-finally by <code>consensus_count</code> if both are absent. The selected
-count column must contain finite, non-negative integers with no missing
-values.</p>
+format</a> into an immundata::ImmunData object.</p>
+<p>Counts are taken from <code>duplicate_count</code>, or from
+<code>umi_count</code> if <code>duplicate_count</code> is absent. If
+neither column is present, no count column is passed to
+<code>immundata</code>. The selected count column must contain finite,
+non-negative integers with no missing values.</p>
 <h2 id="usage">Usage</h2>
-<pre><code class='language-R'>read_immcantation(
+<pre><code class='language-R'>read_immcantation_bulk(
   path,
   schema,
   manifest = NULL,
   manifest_file_col = "file",
   column_profile = "standard",
   repertoire_schema = "&lt;auto&gt;",
-  mode = c("sc", "bulk"),
   ...
 )
 </code></pre>
@@ -937,13 +980,6 @@ id="repertoire_schema">repertoire_schema</code></td>
 <tr>
 <td
 style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
-id="mode">mode</code></td>
-<td><code>"sc"</code> for single-cell tables or <code>"bulk"</code> for
-bulk tables.</td>
-</tr>
-<tr>
-<td
-style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
 id="...">...</code></td>
 <td>Additional arguments passed to
 <code>immundata::read_repertoires()</code>.</td>
@@ -966,15 +1002,17 @@ sequences. The reader does not treat <code>duplicate_count</code> as a
 UMI count. Other available columns depend on the input and
 <code>column_profile</code>. Missing source fields remain absent. Source
 and manifest annotations keep their names.</p>
+<h2 id="see-also">See Also</h2>
+<p><code>read_immcantation_sc()</code> for single-cell tables.</p>
 <h2 id="examples">Examples</h2>
 <pre><code class="language-r">library(&quot;immunread&quot;)
 
-path &lt;- system.file(&quot;extdata&quot;, &quot;immcantation&quot;, &quot;single-cell.tsv.gz&quot;,
+path &lt;- system.file(&quot;extdata&quot;, &quot;immcantation&quot;, &quot;bulk.tsv.gz&quot;,
   package = &quot;immunread&quot;, mustWork = TRUE
 )
-idata &lt;- read_immcantation(path,
-  schema = c(&quot;v_call&quot;, &quot;junction_aa&quot;),
-  mode = &quot;sc&quot;, output_folder = tempfile(&quot;immunread-&quot;)
+idata &lt;- read_immcantation_bulk(path,
+  schema = c(&quot;v_call&quot;, &quot;junction&quot;),
+  repertoire_schema = &quot;sample_id&quot;, output_folder = tempfile(&quot;immunread-&quot;)
 )
 </code></pre>
 

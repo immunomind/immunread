@@ -21,7 +21,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
     
     
       
@@ -612,14 +612,42 @@
   
   
     <li class="md-nav__item">
-      <a href="read_immcantation.html" class="md-nav__link">
+      <a href="read_immcantation_bulk.html" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Immcantation
+    Immcantation bulk
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="read_immcantation_sc.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Immcantation single-cell
   
 
     
@@ -854,7 +882,7 @@
 
 
 <h1 id="read-an-airr-rearrangement-table-as-single-cell-repertoire-data">Read an AIRR Rearrangement table as single-cell repertoire data</h1>
-<p><a href="https://github.com/immunomind/immunread/tree/main/R/read_airr.R#L133"><strong>Source code</strong></a></p>
+<p><a href="https://github.com/immunomind/immunread/tree/main/R/read_airr.R#L143"><strong>Source code</strong></a></p>
 <h2 id="description">Description</h2>
 <p>Reads a single-cell
 <a href="https://docs.airr-community.org/en/stable/datarep/rearrangements.html">AIRR
@@ -862,8 +890,10 @@ Rearrangement table</a> and uses its cell identifiers and counts to
 select receptor chains.</p>
 <p>To select chains, the function uses <code>umi_count</code> when it is
 present. If that column is absent, it uses <code>duplicate_count</code>.
-If both are absent, it uses <code>consensus_count</code>. Missing values
-in the selected field cause an error even when another count field has
+If both are absent, it uses <code>consensus_count</code>. This is the
+same UMI-first priority used by <code>read_airr_bulk()</code>, but here
+the counts are used to rank chains within each cell. Missing values in
+the selected field cause an error even when another count field has
 values. The count and missing-value rules described in
 <code>read_airr_bulk()</code> also apply here.</p>
 <h2 id="usage">Usage</h2>

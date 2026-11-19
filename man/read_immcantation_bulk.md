@@ -1,37 +1,30 @@
 
 
-# Read Immcantation AIRR-like tables
+# Read Immcantation AIRR-C bulk tables
 
-[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_immcantation.R#L38)
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_immcantation.R#L34)
 
 ## Description
 
-Reads Immcantation tables using the
+Reads bulk Immcantation tables using the
 <a href="https://changeo.readthedocs.io/en/stable/standard.html#airr-c-format">AIRR-C
-format</a> in bulk or single-cell mode and reads their annotations into
-an immundata::ImmunData object.
+format</a> into an immundata::ImmunData object.
 
-In single-cell mode, the reader passes available chains to
-<code>immundata</code>, which selects chains according to
-<code>schema</code> and count ranking. In bulk mode, counts are taken
-from <code>duplicate_count</code>, or from <code>umi_count</code> if
-<code>duplicate_count</code> is absent. In single-cell mode, chains are
-ranked by <code>umi_count</code> when present, then by
-<code>duplicate_count</code> if <code>umi_count</code> is absent, and
-finally by <code>consensus_count</code> if both are absent. The selected
-count column must contain finite, non-negative integers with no missing
-values.
+Counts are taken from <code>duplicate_count</code>, or from
+<code>umi_count</code> if <code>duplicate_count</code> is absent. If
+neither column is present, no count column is passed to
+<code>immundata</code>. The selected count column must contain finite,
+non-negative integers with no missing values.
 
 ## Usage
 
-<pre><code class='language-R'>read_immcantation(
+<pre><code class='language-R'>read_immcantation_bulk(
   path,
   schema,
   manifest = NULL,
   manifest_file_col = "file",
   column_profile = "standard",
   repertoire_schema = "&lt;auto&gt;",
-  mode = c("sc", "bulk"),
   ...
 )
 </code></pre>
@@ -91,13 +84,6 @@ id="repertoire_schema">repertoire_schema</code></td>
 <tr>
 <td
 style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
-id="mode">mode</code></td>
-<td><code>"sc"</code> for single-cell tables or <code>"bulk"</code> for
-bulk tables.</td>
-</tr>
-<tr>
-<td
-style="white-space: nowrap; font-family: monospace; vertical-align: top"><code
 id="...">...</code></td>
 <td>Additional arguments passed to
 <code>immundata::read_repertoires()</code>.</td>
@@ -122,16 +108,20 @@ UMI count. Other available columns depend on the input and
 <code>column_profile</code>. Missing source fields remain absent. Source
 and manifest annotations keep their names.
 
+## See Also
+
+<code>read_immcantation_sc()</code> for single-cell tables.
+
 ## Examples
 
 ``` r
 library("immunread")
 
-path <- system.file("extdata", "immcantation", "single-cell.tsv.gz",
+path <- system.file("extdata", "immcantation", "bulk.tsv.gz",
   package = "immunread", mustWork = TRUE
 )
-idata <- read_immcantation(path,
-  schema = c("v_call", "junction_aa"),
-  mode = "sc", output_folder = tempfile("immunread-")
+idata <- read_immcantation_bulk(path,
+  schema = c("v_call", "junction"),
+  repertoire_schema = "sample_id", output_folder = tempfile("immunread-")
 )
 ```

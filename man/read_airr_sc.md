@@ -2,7 +2,7 @@
 
 # Read an AIRR Rearrangement table as single-cell repertoire data
 
-[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_airr.R#L133)
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_airr.R#L143)
 
 ## Description
 
@@ -13,8 +13,10 @@ select receptor chains.
 
 To select chains, the function uses <code>umi_count</code> when it is
 present. If that column is absent, it uses <code>duplicate_count</code>.
-If both are absent, it uses <code>consensus_count</code>. Missing values
-in the selected field cause an error even when another count field has
+If both are absent, it uses <code>consensus_count</code>. This is the
+same UMI-first priority used by <code>read_airr_bulk()</code>, but here
+the counts are used to rank chains within each cell. Missing values in
+the selected field cause an error even when another count field has
 values. The count and missing-value rules described in
 <code>read_airr_bulk()</code> also apply here.
 

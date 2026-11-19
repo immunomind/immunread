@@ -2,7 +2,7 @@
 
 # Read an AIRR Rearrangement table as bulk repertoire data
 
-[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_airr.R#L72)
+[**Source code**](https://github.com/immunomind/immunread/tree/main/R/read_airr.R#L78)
 
 ## Description
 
@@ -87,10 +87,18 @@ id="...">...</code></td>
 
 ## Details
 
-Counts are taken from <code>duplicate_count</code>, or from
-<code>umi_count</code> if <code>duplicate_count</code> is absent. If
-neither column is present, no count column is passed to
-<code>immundata</code>.
+Counts are taken from the first available column in this order:
+<code>umi_count</code>, <code>duplicate_count</code>,
+<code>consensus_count</code>. If none is present, no count column is
+passed to <code>immundata</code>.
+
+So in short, this default prioritizes counts of tagged molecules over
+read counts. Please mind that the
+<a href="https://docs.airr-community.org/en/stable/datarep/news.html#version-1-4-1-august-27-2022">AIRR
+schema v1.4.1 release notes</a> distinguish distinct UMIs
+(<code>umi_count</code>) from duplicate sequence observations
+(<code>duplicate_count</code>), and this priority order is our
+interpretation of the standard.
 
 Count values must be finite, non-negative integers. Optional count
 columns can contain missing values, but the selected count column must
