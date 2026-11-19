@@ -76,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#installation" class="md-skip">
+        <a href="#supported-parsers" class="md-skip">
           Skip to content
         </a>
       
@@ -366,6 +366,17 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#supported-parsers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported parsers
+      
+    </span>
+  </a>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#installation" class="md-nav__link">
@@ -738,6 +749,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#supported-parsers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Supported parsers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#installation" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -789,18 +811,21 @@
   · <a href="https://github.com/immunomind">ImmunoMind ecosystem</a>
 </p>
 
-<p><code>immunread</code> imports
-<a href="https://docs.airr-community.org/en/stable/datarep/rearrangements.html">AIRR</a>,
-<a href="https://www.10xgenomics.com/support/software/cell-ranger/latest/analysis/cr-5p-outputs-annotations-vdj">10x Genomics</a>,
-<a href="https://bd-rhapsody-bioinfo-docs.genomics.bd.com/outputs/outputs_vdj_contigs.html">BD Rhapsody</a>,
-<a href="https://mixcr.com/mixcr/reference/overview-analysis-overview/">MiXCR</a>,
-<a href="https://immcantation.readthedocs.io/en/stable/">Immcantation</a>,
-<a href="https://sc-dandelion.readthedocs.io/en/latest/index.html">Dandelion</a>,
-<a href="https://www.parsebiosciences.com/products/evercode-tcr/">Parse Biosciences</a>,
-<a href="https://github.com/liulab-dfci/TRUST4">TRUST4</a>,
-<a href="https://github.com/mainciburu/WAT3R">WAT3R</a>, and
-<a href="https://www.adaptivebiotech.com/">Adaptive immunoSEQ</a> data into
-<a href="https://github.com/immunomind/immundata"><code>immundata::ImmunData</code></a> objects.</p>
+<p><code>immunread</code> simplifies reading immune repertoire data from the most common
+bulk and single-cell formats into <code>immundata::ImmunData</code> objects.</p>
+<h2 id="supported-parsers">Supported parsers</h2>
+<ul>
+<li>AIRR Rearrangement tables: <a href="https://immunomind.github.io/immunread/man/read_airr_bulk.html">bulk</a> and <a href="https://immunomind.github.io/immunread/man/read_airr_sc.html">single-cell</a></li>
+<li><a href="https://immunomind.github.io/immunread/man/read_10x.html">10x Genomics</a></li>
+<li><a href="https://immunomind.github.io/immunread/man/read_adaptive.html">Adaptive immunoSEQ</a></li>
+<li><a href="https://immunomind.github.io/immunread/man/read_bd.html">BD Rhapsody</a></li>
+<li><a href="https://immunomind.github.io/immunread/man/read_dandelion.html">Dandelion</a></li>
+<li><a href="https://immunomind.github.io/immunread/man/read_immcantation.html">Immcantation</a></li>
+<li><a href="https://immunomind.github.io/immunread/man/read_mixcr.html">MiXCR</a></li>
+<li><a href="https://immunomind.github.io/immunread/man/read_parsebio.html">Parse Biosciences</a></li>
+<li><a href="https://immunomind.github.io/immunread/man/read_trust4.html">TRUST4</a></li>
+<li><a href="https://immunomind.github.io/immunread/man/read_wat3r.html">WAT3R</a></li>
+</ul>
 <h2 id="installation">Installation</h2>
 <p>Install the development packages from GitHub with
 <a href="https://pak.r-lib.org/"><code>pak</code></a> in <code>R</code>:</p>

@@ -8,18 +8,21 @@
   · <a href="https://github.com/immunomind">ImmunoMind ecosystem</a>
 </p>
 
-`immunread` imports
-[AIRR](https://docs.airr-community.org/en/stable/datarep/rearrangements.html),
-[10x Genomics](https://www.10xgenomics.com/support/software/cell-ranger/latest/analysis/cr-5p-outputs-annotations-vdj),
-[BD Rhapsody](https://bd-rhapsody-bioinfo-docs.genomics.bd.com/outputs/outputs_vdj_contigs.html),
-[MiXCR](https://mixcr.com/mixcr/reference/overview-analysis-overview/),
-[Immcantation](https://immcantation.readthedocs.io/en/stable/),
-[Dandelion](https://sc-dandelion.readthedocs.io/en/latest/index.html),
-[Parse Biosciences](https://www.parsebiosciences.com/products/evercode-tcr/),
-[TRUST4](https://github.com/liulab-dfci/TRUST4),
-[WAT3R](https://github.com/mainciburu/WAT3R), and
-[Adaptive immunoSEQ](https://www.adaptivebiotech.com/) data into
-[`immundata::ImmunData`](https://github.com/immunomind/immundata) objects.
+`immunread` simplifies reading immune repertoire data from the most common
+bulk and single-cell formats into `immundata::ImmunData` objects.
+
+## Supported parsers
+
+- AIRR Rearrangement tables: [bulk](https://immunomind.github.io/immunread/man/read_airr_bulk.html) and [single-cell](https://immunomind.github.io/immunread/man/read_airr_sc.html)
+- [10x Genomics](https://immunomind.github.io/immunread/man/read_10x.html)
+- [Adaptive immunoSEQ](https://immunomind.github.io/immunread/man/read_adaptive.html)
+- [BD Rhapsody](https://immunomind.github.io/immunread/man/read_bd.html)
+- [Dandelion](https://immunomind.github.io/immunread/man/read_dandelion.html)
+- [Immcantation](https://immunomind.github.io/immunread/man/read_immcantation.html)
+- [MiXCR](https://immunomind.github.io/immunread/man/read_mixcr.html)
+- [Parse Biosciences](https://immunomind.github.io/immunread/man/read_parsebio.html)
+- [TRUST4](https://immunomind.github.io/immunread/man/read_trust4.html)
+- [WAT3R](https://immunomind.github.io/immunread/man/read_wat3r.html)
 
 ## Installation
 
