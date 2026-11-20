@@ -1,12 +1,31 @@
 <div align="center">
-  <h1>📜 <code>immunread</code> — Read immune repertoire data in R</h1>
+  <h1>📜 <code>immunread</code> – <strong>Read immune repertoire data in R</strong></h1>
+</div>
+
+---
+
+<div align="center">
+  <a href="https://github.com/immunomind">
+    <img alt="Ecosystem: ImmunoMind"
+         src="https://img.shields.io/badge/ecosystem-ImmunoMind-orange?style=flat-square">
+  </a>
+  <a href="https://github.com/immunomind/immunread/actions/workflows/altdoc.yaml">
+    <img alt="Build documentation"
+         src="https://github.com/immunomind/immunread/actions/workflows/altdoc.yaml/badge.svg">
+  </a>
+  <a href="https://github.com/immunomind/immunread/issues">
+    <img alt="GitHub Issues"
+         src="https://img.shields.io/github/issues/immunomind/immunread?style=flat-square">
+  </a>
 </div>
 
 <p align="center">
-  <a href="https://immunomind.github.io/immunread/">API reference</a>
-  · <a href="https://github.com/immunomind/immunread/issues">Issues</a>
-  · <a href="https://github.com/immunomind">ImmunoMind ecosystem</a>
+  <a href="https://immunomind.github.io/immunread/">Documentation</a>
+  |
+  <a href="https://immunomind.github.io/docs/">Ecosystem</a>
 </p>
+
+---
 
 `immunread` simplifies reading immune repertoire data from the most common
 bulk and single-cell formats into `immundata::ImmunData` objects.

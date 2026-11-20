@@ -39,8 +39,8 @@ exclude_docs: |
   !/assets/
   !/assets/**
 nav:
+  - Home: README.md
   - Reference:
-      - Overview: README.md
       - AIRR-C bulk: man/read_airr_bulk.md
       - AIRR-C single-cell: man/read_airr_sc.md
       - 10x Genomics: man/read_10x.md
